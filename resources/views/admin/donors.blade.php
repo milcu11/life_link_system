@@ -38,8 +38,13 @@
                                     <div class="flex items-center gap-3">
                                         <i class="fas fa-user-circle text-gray-400 text-xl"></i>
                                         <div>
-                                            <p class="text-sm font-medium text-gray-900">{{ $donor->user->name }}</p>
-                                            <p class="text-sm text-gray-500">{{ $donor->user->email }}</p>
+                                            @if($donor->user)
+                                                <p class="text-sm font-medium text-gray-900">{{ $donor->user->name }}</p>
+                                                <p class="text-sm text-gray-500">{{ $donor->user->email }}</p>
+                                            @else
+                                                <p class="text-sm font-medium text-gray-900 text-red-600">User Not Found</p>
+                                                <p class="text-sm text-gray-500">user_id: {{ $donor->user_id }}</p>
+                                            @endif
                                         </div>
                                     </div>
                                 </td>
