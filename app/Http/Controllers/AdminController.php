@@ -218,9 +218,17 @@ class AdminController extends Controller
                 'verified_at' => now(),
             ]);
 
-            // Email temporarily disabled - SMTP timeout issues
-            // TODO: Fix Gmail SMTP or use transactional email service
-            \Illuminate\Support\Facades\Log::info('Donor approved: ' . $donor->id . ' (email disabled due to SMTP issues)');
+            // Send email notification
+            if ($donor->user) {
+                try {
+                    \Illuminate\Support\Facades\Log::info('Sending approval email to: ' . $donor->user->email);
+                    \Illuminate\Support\Facades\Mail::send(new \App\Mail\DonorVerificationStatus($donor, true));
+                    \Illuminate\Support\Facades\Log::info('Approval email sent successfully to: ' . $donor->user->email);
+                } catch (\Throwable $e) {
+                    \Illuminate\Support\Facades\Log::warning('Email sending failed (continuing): ' . $e->getMessage());
+                    // Don't fail the approval just because email failed
+                }
+            }
 
             return redirect()->back()->with('success', 'Donor approved successfully.');
         } catch (\Exception $e) {
@@ -239,9 +247,17 @@ class AdminController extends Controller
                 'rejection_reason' => $request->input('reason'),
             ]);
 
-            // Email temporarily disabled - SMTP timeout issues
-            // TODO: Fix Gmail SMTP or use transactional email service
-            \Illuminate\Support\Facades\Log::info('Donor rejected: ' . $donor->id . ' (email disabled due to SMTP issues)');
+            // Send email notification
+            if ($donor->user) {
+                try {
+                    \Illuminate\Support\Facades\Log::info('Sending rejection email to: ' . $donor->user->email);
+                    \Illuminate\Support\Facades\Mail::send(new \App\Mail\DonorVerificationStatus($donor, false));
+                    \Illuminate\Support\Facades\Log::info('Rejection email sent successfully to: ' . $donor->user->email);
+                } catch (\Throwable $e) {
+                    \Illuminate\Support\Facades\Log::warning('Email sending failed (continuing): ' . $e->getMessage());
+                    // Don't fail the rejection just because email failed
+                }
+            }
 
             return redirect()->back()->with('success', 'Donor rejected successfully.');
         } catch (\Exception $e) {
