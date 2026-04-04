@@ -38,7 +38,7 @@
 
         <div class="mt-6">
             <h2 class="font-semibold">What this means</h2>
-            <p class="text-gray-600">@if($isPending)You will receive a notification once a decision is made.@elseif($isRejected)You cannot be scheduled for donations while the status is not approved. The reason: <strong>{{ $donor->rejection_reason }}</strong>@endif This decision may be temporary — you can appeal below or contact support for clarification.</p>
+            <p class="text-gray-600">@if($isPending)You will receive a notification once a decision is made.@elseif($isRejected)You cannot be scheduled for donations while the status is not approved. The reason: <strong>{{ $donor->rejection_reason }}</strong>@endif This decision may be temporary you can appeal below or contact support for clarification.</p>
         </div>
 
         <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -47,6 +47,25 @@
                 <p class="text-gray-600">If you believe this decision is in error, submit an appeal and attach any supporting documents (ID, medical clearance, etc.).</p>
             </div>
             <div>
+                <style>
+                    input[type="file"] {
+                        cursor: pointer;
+                    }
+                    input[type="file"]::file-selector-button {
+                        background: transparent;
+                        border: none;
+                        padding: 0;
+                        margin: 0;
+                        margin-right: 0.5rem;
+                        cursor: pointer;
+                    }
+                    input[type="file"]::file-selector-button:hover {
+                        color: red;
+                    }
+                    button[type="submit"] {
+                        cursor: pointer;
+                    }
+                </style>
                 <form method="POST" action="{{ route('donor.appeal.store') }}" enctype="multipart/form-data" class="space-y-3">
                     @csrf
                     <div>
@@ -55,10 +74,23 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Attach document (pdf, jpg, png)</label>
-                        <input type="file" name="attachment" class="mt-1 block w-full" />
+                        <div class="mt-1">
+                            <label for="attachment" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 cursor-pointer transition">
+                                <i class="fas fa-file-upload mr-2"></i>
+                                Choose File
+                            </label>
+                            <input id="attachment" type="file" name="attachment" class="sr-only" />
+                            <span id="selectedFile" class="ml-3 text-sm text-gray-600"></span>
+                        </div>
                     </div>
+                    <script>
+                        document.getElementById('attachment').addEventListener('change', function(e) {
+                            const fileName = e.target.files[0]?.name || 'No file chosen';
+                            document.getElementById('selectedFile').textContent = fileName;
+                        });
+                    </script>
                     <div>
-                        <button class="btn btn-primary">
+                        <button type="submit" class="inline-flex items-center justify-center px-4 py-2 rounded-md border border-transparent text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition">
                             <i class="fas fa-cloud-upload-alt mr-2"></i> Submit Appeal
                         </button>
                     </div>

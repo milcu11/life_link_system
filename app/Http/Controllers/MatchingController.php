@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SendMatchNotification;
 use App\Models\BloodRequest;
 use App\Models\Donor;
 use App\Models\Matching;
@@ -54,10 +55,9 @@ class MatchingController extends Controller
                 'compatibility_score' => $compatibilityScore,
                 'distance' => $distance,
                 'status' => 'pending',
-                'notified_at' => now(),
             ]);
 
-            // Create notification for donor
+            // Create in-app notification for donor
             Notification::create([
                 'user_id' => $donor->user_id,
                 'type' => $request->isUrgent() ? 'emergency' : 'in_app',
@@ -65,6 +65,11 @@ class MatchingController extends Controller
                 'message' => "A {$request->urgency_level} priority request for {$request->blood_type} blood is available near you.",
                 'request_id' => $request->id,
             ]);
+
+            // Dispatch email notification job (runs asynchronously via queue)
+            SendMatchNotification::dispatch($match)
+                ->onQueue('default')
+                ->delay(now()); // Send immediately
 
             $matchesCreated++;
         }

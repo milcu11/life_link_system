@@ -45,9 +45,13 @@
                                         {{ $donation->donor->blood_type }}
                                     </span>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $donation->request->quantity }} units</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $donation->request ? $donation->request->quantity . ' units' : $donation->quantity . ' units' }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                    <a href="#" class="text-red-600 hover:text-red-700 font-medium">#{{ $donation->request_id }}</a>
+                                    @if($donation->request)
+                                        <a href="#" class="text-red-600 hover:text-red-700 font-medium">#{{ $donation->request_id }}</a>
+                                    @else
+                                        <span class="text-gray-500">N/A</span>
+                                    @endif
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $donation->donation_date?->format('M d, Y') ?? 'Not set' }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap">

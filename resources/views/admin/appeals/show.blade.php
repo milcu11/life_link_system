@@ -10,7 +10,13 @@
         <p><strong>Submitted:</strong> {{ $appeal->created_at->toDayDateTimeString() }}</p>
         <p class="mt-4"><strong>Message:</strong><br>{{ $appeal->message }}</p>
         @if($appeal->attachment_path)
-            <p class="mt-4"><strong>Attachment:</strong> <a href="{{ asset('storage/'.$appeal->attachment_path) }}" target="_blank" class="text-blue-600">Download</a></p>
+            <div class="mt-4">
+                <p class="text-sm text-black font-semibold"><strong>Attachment:</strong></p>
+                <p class="text-sm font-medium text-gray-800">{{ basename($appeal->attachment_path) }}</p>
+                <a href="{{ route('admin.appeals.download', $appeal) }}" class="mt-2 inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
+                    <i class="fas fa-download"></i> Download
+                </a>
+            </div>
         @endif
 
         <div class="mt-6">

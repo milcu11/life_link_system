@@ -3,167 +3,94 @@
 @section('title', 'Notifications')
 
 @section('content')
-<div class="notifications-container">
-    <div class="page-header">
-        <h1 class="page-title">Notifications</h1>
-        <div class="header-actions">
-            <form action="{{ route('notifications.read-all') }}" method="POST">
-                @csrf
-                <button type="submit" class="btn btn-secondary" data-testid="mark-all-read-btn">
-                    <i class="fas fa-check-double"></i> Mark All as Read
-                </button>
-            </form>
+<div class="min-h-screen bg-gray-50 py-8">
+    <div class="max-w-4xl mx-auto px-4">
+        <!-- Header -->
+        <div class="mb-8 flex justify-between items-center">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900">Notifications</h1>
+                <p class="text-gray-600 mt-2">Stay updated with system alerts and messages</p>
+            </div>
+            @if($notifications->count() > 0)
+                <form action="{{ route('notifications.read-all') }}" method="POST">
+                    @csrf
+                    <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium transition">
+                        <i class="fas fa-check-double mr-2"></i>Mark All as Read
+                    </button>
+                </form>
+            @endif
         </div>
-    </div>
 
-    <div class="notifications-list-card">
-        @forelse($notifications as $notification)
-            <div class="notification-item {{ $notification->read_at ? 'read' : 'unread' }}" data-testid="notification-{{ $notification->id }}">
-                <div class="notification-icon {{ $notification->type }}">
-                    @if($notification->type === 'emergency')
-                        <i class="fas fa-exclamation-circle"></i>
-                    @elseif($notification->type === 'sms')
-                        <i class="fas fa-sms"></i>
-                    @elseif($notification->type === 'email')
-                        <i class="fas fa-envelope"></i>
-                    @else
-                        <i class="fas fa-bell"></i>
-                    @endif
-                </div>
-                <div class="notification-content">
-                    <h4 class="notification-title">{{ $notification->title }}</h4>
-                    <p class="notification-message">{{ $notification->message }}</p>
-                    <div class="notification-meta">
-                        <span class="notification-time">
-                            <i class="fas fa-clock"></i>
-                            {{ $notification->created_at->diffForHumans() }}
-                        </span>
-                        @if($notification->type === 'emergency')
-                            <span class="notification-type emergency">
-                                <i class="fas fa-circle-exclamation"></i> Emergency
-                            </span>
-                        @endif
+        <!-- Notifications List -->
+        <div class="space-y-4">
+            @forelse($notifications as $notification)
+                <div class="bg-white rounded-lg shadow-sm border-l-4 {{ $notification->read_at ? 'border-gray-300' : 'border-red-600' }} p-6 hover:shadow-md transition">
+                    <div class="flex items-start gap-4">
+                        <!-- Icon -->
+                        <div class="flex-shrink-0">
+                            @if($notification->type === 'emergency')
+                                <div class="flex items-center justify-center w-12 h-12 bg-red-100 rounded-lg">
+                                    <i class="fas fa-exclamation-circle text-red-600 text-lg"></i>
+                                </div>
+                            @elseif($notification->type === 'sms')
+                                <div class="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-lg">
+                                    <i class="fas fa-sms text-blue-600 text-lg"></i>
+                                </div>
+                            @elseif($notification->type === 'email')
+                                <div class="flex items-center justify-center w-12 h-12 bg-orange-100 rounded-lg">
+                                    <i class="fas fa-envelope text-orange-600 text-lg"></i>
+                                </div>
+                            @else
+                                <div class="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-lg">
+                                    <i class="fas fa-bell text-gray-600 text-lg"></i>
+                                </div>
+                            @endif
+                        </div>
+
+                        <!-- Content -->
+                        <div class="flex-1">
+                            <div class="flex items-start justify-between">
+                                <div class="flex-1">
+                                    <h3 class="text-lg font-semibold text-gray-900">{{ $notification->title }}</h3>
+                                    <p class="text-gray-600 mt-1">{{ $notification->message }}</p>
+                                    <div class="flex items-center gap-4 mt-3">
+                                        <span class="text-sm text-gray-500">
+                                            <i class="fas fa-clock mr-1"></i>{{ $notification->created_at->diffForHumans() }}
+                                        </span>
+                                        @if($notification->type === 'emergency')
+                                            <span class="text-sm px-3 py-1 bg-red-100 text-red-700 rounded-full font-medium">
+                                                <i class="fas fa-circle-exclamation mr-1"></i>Emergency
+                                            </span>
+                                        @endif
+                                    </div>
+                                </div>
+
+                                <!-- Action -->
+                                @if(!$notification->read_at)
+                                    <form action="{{ route('notifications.read', $notification) }}" method="POST" class="ml-4">
+                                        @csrf
+                                        <button type="submit" class="px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition font-medium">
+                                            <i class="fas fa-check mr-1"></i>Mark Read
+                                        </button>
+                                    </form>
+                                @else
+                                    <div class="ml-4 px-3 py-2 text-sm text-green-600 font-medium">
+                                        <i class="fas fa-check-circle"></i>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="notification-actions">
-                    @if(!$notification->read_at)
-                        <form action="{{ route('notifications.read', $notification) }}" method="POST">
-                            @csrf
-                            <button type="submit" class="btn-icon" title="Mark as read" data-testid="mark-read-{{ $notification->id }}">
-                                <i class="fas fa-check"></i>
-                            </button>
-                        </form>
-                    @else
-                        <span class="read-badge"><i class="fas fa-check-circle"></i></span>
-                    @endif
+            @empty
+                <!-- Empty State -->
+                <div class="bg-white rounded-lg shadow-sm p-12 text-center">
+                    <i class="fas fa-bell-slash text-4xl text-gray-300 mb-4 block"></i>
+                    <h3 class="text-xl font-semibold text-gray-900">No Notifications</h3>
+                    <p class="text-gray-600 mt-2">You're all caught up! Check back later for updates.</p>
                 </div>
-            </div>
-        @empty
-            <div class="empty-state-lg">
-                <i class="fas fa-bell-slash"></i>
-                <h3>No Notifications</h3>
-                <p>You're all caught up! Check back later for updates.</p>
-            </div>
-        @endforelse
+            @endforelse
+        </div>
     </div>
 </div>
-
-@push('styles')
-<style>
-.notifications-list-card {
-    background: white;
-    border-radius: 12px;
-    box-shadow: var(--shadow);
-    overflow: hidden;
-}
-
-.notification-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 1rem;
-    padding: 1.5rem;
-    border-bottom: 1px solid var(--gray-200);
-    transition: background 0.2s;
-}
-
-.notification-item:last-child {
-    border-bottom: none;
-}
-
-.notification-item.unread {
-    background: #fef2f2;
-}
-
-.notification-item:hover {
-    background: var(--gray-50);
-}
-
-.notification-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    flex-shrink: 0;
-}
-
-.notification-icon.emergency {
-    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-    color: white;
-}
-
-.notification-icon.in_app,
-.notification-icon.sms,
-.notification-icon.email {
-    background: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-dark) 100%);
-    color: white;
-}
-
-.notification-content {
-    flex: 1;
-}
-
-.notification-title {
-    font-size: 1.125rem;
-    font-weight: 600;
-    color: var(--gray-900);
-    margin-bottom: 0.5rem;
-}
-
-.notification-message {
-    color: var(--gray-700);
-    margin-bottom: 0.75rem;
-}
-
-.notification-meta {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    font-size: 0.875rem;
-}
-
-.notification-time {
-    color: var(--gray-500);
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-}
-
-.notification-type.emergency {
-    color: var(--primary);
-    font-weight: 600;
-}
-
-.notification-actions {
-    flex-shrink: 0;
-}
-
-.read-badge {
-    color: var(--success);
-    font-size: 1.25rem;
-}
-</style>
-@endpush
 @endsection

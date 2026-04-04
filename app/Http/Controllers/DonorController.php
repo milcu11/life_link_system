@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\DonorAcceptedMatch;
+use App\Models\Donation;
 use App\Models\Donor;
 use App\Models\Matching;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
 class DonorController extends Controller
@@ -70,7 +74,7 @@ class DonorController extends Controller
             return redirect()->route('donor.profile')->with('info', 'Please complete your profile first.');
         }
 
-        $donations = $donor->donations()->with('request')->latest()->paginate(10);
+        $donations = $donor->donations()->with(['request.hospital'])->latest()->paginate(10);
         
         return view('donor.history', compact('donor', 'donations'));
     }
@@ -116,14 +120,49 @@ class DonorController extends Controller
             'response' => 'required|in:accepted,rejected'
         ]);
 
+        $isAccepted = $request->response === 'accepted';
+
         $match->update([
             'status' => $request->response,
             'responded_at' => now()
         ]);
 
-        $message = $request->response === 'accepted' 
-            ? 'You have accepted this blood donation request.' 
-            : 'You have declined this blood donation request.';
+        if ($isAccepted) {
+            // Create a donation record
+            Donation::create([
+                'donor_id' => $match->donor_id,
+                'request_id' => $match->request_id,
+                'quantity' => $match->request->quantity,
+                'status' => 'scheduled',
+                'donation_date' => now(), // Can be updated by hospital later
+            ]);
+
+            // Create notification for hospital
+            $bloodRequest = $match->request;
+            $hospital = $bloodRequest->hospital;
+            
+            Notification::create([
+                'user_id' => $hospital->id,
+                'type' => 'in_app',
+                'title' => "Donor Accepted: {$match->donor->blood_type}",
+                'message' => "{$match->donor->user->name} has accepted your blood request for {$bloodRequest->patient_name}.",
+                'request_id' => $bloodRequest->id,
+            ]);
+
+            // Send email to hospital
+            try {
+                Mail::send(new DonorAcceptedMatch($match));
+            } catch (\Exception $e) {
+                \Log::error('Failed to send donor accepted email', [
+                    'match_id' => $match->id,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+
+            $message = 'You have accepted this blood donation request. The hospital will contact you soon!';
+        } else {
+            $message = 'You have declined this blood donation request.';
+        }
 
         return redirect()->back()->with('success', $message);
     }

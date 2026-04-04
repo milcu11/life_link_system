@@ -18,11 +18,8 @@
             <div class="flex justify-between items-center h-16">
                 <!-- Logo & Brand -->
                 <div class="flex items-center gap-3">
-                    <a href="{{ route('dashboard') }}" class="flex items-center gap-2 hover:opacity-80 transition">
-                        <svg class="h-8 w-8 text-red-600" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                        </svg>
-                        <span class="text-xl font-bold text-gray-900">LifeLink</span>
+                    <a href="{{ route('dashboard') }}" class="flex items-center gap-2 hover:opacity-80 transition" title="LifeLink - Blood Donation System">
+                        <img src="{{ asset('images/lifelink-logo.svg') }}" alt="LifeLink Logo" class="lifelink-logo-nav" />
                     </a>
                 </div>
 
@@ -30,19 +27,22 @@
                 <div class="hidden md:flex items-center gap-8">
                     @auth
                         @if(auth()->user()->isAdmin())
-                            <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2 text-gray-600 hover:text-red-600 font-medium transition {{ request()->routeIs('admin.dashboard') ? 'text-red-600' : '' }}">
+                            <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2 text-gray-600 hover:text-red-600 font-medium transition {{ request()->routeIs('admin.dashboard*') || request()->is('admin') ? 'text-red-600' : '' }}">
                                 <i class="fas fa-chart-line"></i> Dashboard
                             </a>
-                            <a href="{{ route('admin.donors') }}" class="flex items-center gap-2 text-gray-600 hover:text-red-600 font-medium transition {{ request()->routeIs('admin.donors') ? 'text-red-600' : '' }}">
+                            <a href="{{ route('admin.donors') }}" class="flex items-center gap-2 text-gray-600 hover:text-red-600 font-medium transition {{ request()->routeIs('admin.donors*') || request()->is('admin/donors*') ? 'text-red-600' : '' }}">
                                 <i class="fas fa-users"></i> Donors
                             </a>
-                            <a href="{{ route('admin.requests') }}" class="flex items-center gap-2 text-gray-600 hover:text-red-600 font-medium transition {{ request()->routeIs('admin.requests') ? 'text-red-600' : '' }}">
+                            <a href="{{ route('admin.requests') }}" class="flex items-center gap-2 text-gray-600 hover:text-red-600 font-medium transition {{ request()->routeIs('admin.requests*') || request()->is('admin/requests*') ? 'text-red-600' : '' }}">
                                 <i class="fas fa-hand-holding-medical"></i> Requests
                             </a>
-                            <a href="{{ route('admin.map') }}" class="flex items-center gap-2 text-gray-600 hover:text-red-600 font-medium transition {{ request()->routeIs('admin.map') ? 'text-red-600' : '' }}">
+                            <a href="{{ route('admin.appeals') }}" class="flex items-center gap-2 text-gray-600 hover:text-red-600 font-medium transition {{ request()->routeIs('admin.appeals*') || request()->is('admin/appeals*') ? 'text-red-600' : '' }}">
+                                <i class="fas fa-exclamation-circle"></i> Appeals
+                            </a>
+                            <a href="{{ route('admin.map') }}" class="flex items-center gap-2 text-gray-600 hover:text-red-600 font-medium transition {{ request()->routeIs('admin.map*') || request()->is('admin/map*') ? 'text-red-600' : '' }}">
                                 <i class="fas fa-map-marked-alt"></i> Map
                             </a>
-                            <a href="{{ route('admin.reports') }}" class="flex items-center gap-2 text-gray-600 hover:text-red-600 font-medium transition {{ request()->routeIs('admin.reports') ? 'text-red-600' : '' }}">
+                            <a href="{{ route('admin.reports') }}" class="flex items-center gap-2 text-gray-600 hover:text-red-600 font-medium transition {{ request()->routeIs('admin.reports*') || request()->is('admin/reports*') ? 'text-red-600' : '' }}">
                                 <i class="fas fa-file-alt"></i> Reports
                             </a>
                         @elseif(auth()->user()->isHospital())
@@ -62,12 +62,20 @@
                             <a href="{{ route('donor.profile') }}" class="flex items-center gap-2 text-gray-600 hover:text-red-600 font-medium transition {{ request()->routeIs('donor.profile') ? 'text-red-600' : '' }}">
                                 <i class="fas fa-user"></i> Profile
                             </a>
-                            <a href="{{ route('donor.requests') }}" class="flex items-center gap-2 text-gray-600 hover:text-red-600 font-medium transition {{ request()->routeIs('donor.requests') ? 'text-red-600' : '' }}">
-                                <i class="fas fa-bell"></i> Requests
-                            </a>
-                            <a href="{{ route('donor.history') }}" class="flex items-center gap-2 text-gray-600 hover:text-red-600 font-medium transition {{ request()->routeIs('donor.history') ? 'text-red-600' : '' }}">
-                                <i class="fas fa-history"></i> History
-                            </a>
+
+                            @php
+                                $donor = auth()->user()->donor ?? null;
+                                $donorRestricted = $donor && !$donor->is_verified;
+                            @endphp
+
+                            @unless($donorRestricted)
+                                <a href="{{ route('donor.requests') }}" class="flex items-center gap-2 text-gray-600 hover:text-red-600 font-medium transition {{ request()->routeIs('donor.requests') ? 'text-red-600' : '' }}">
+                                    <i class="fas fa-bell"></i> Requests
+                                </a>
+                                <a href="{{ route('donor.history') }}" class="flex items-center gap-2 text-gray-600 hover:text-red-600 font-medium transition {{ request()->routeIs('donor.history') ? 'text-red-600' : '' }}">
+                                    <i class="fas fa-history"></i> History
+                                </a>
+                            @endunless
                         @endif
                     @endauth
                 </div>
@@ -75,19 +83,27 @@
                 <!-- User Menu -->
                 @auth
                     <div class="flex items-center gap-4">
-                        <button onclick="toggleUserMenu()" class="flex items-center gap-2 text-gray-700 hover:text-red-600 transition">
+                        <button onclick="toggleUserMenu()" class="flex items-center gap-2 text-gray-700 hover:text-red-600 transition cursor-pointer">
                             <i class="fas fa-user-circle text-xl"></i>
                             <span class="text-sm font-medium hidden sm:inline">{{ auth()->user()->name }}</span>
                             <i class="fas fa-chevron-down text-xs"></i>
                         </button>
-                        <div id="userDropdown" class="hidden absolute top-16 right-4 bg-white rounded-lg shadow-lg py-2 w-48">
-                            <a href="{{ route('notifications.index') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 text-sm">
-                                <i class="fas fa-bell text-red-600 mr-2"></i> Notifications
-                            </a>
+                        <div id="userDropdown" class="hidden fixed top-16 right-4 bg-white rounded-lg shadow-lg py-2 w-48 z-50">
+                            <style>
+                                #userDropdown a,
+                                #userDropdown button {
+                                    cursor: pointer;
+                                }
+                            </style>
+                            @unless(auth()->user()->isAdmin())
+                                <a href="{{ route('notifications.index') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 text-sm">
+                                    <i class="fas fa-bell text-red-600 mr-2"></i> Notifications
+                                </a>
+                            @endunless
                             <form action="{{ route('logout') }}" method="POST">
                                 @csrf
-                                <button type="submit" class="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 text-sm border-t border-gray-200">
-                                    <i class="fas fa-sign-out-alt text-red-600 mr-2"></i> Logout
+                                <button type="submit" class="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 text-sm border-t border-gray-200 cursor-pointer">
+                                    Sign Out
                                 </button>
                             </form>
                         </div>
@@ -96,6 +112,22 @@
             </div>
         </div>
     </nav>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const links = document.querySelectorAll('nav a');
+            const path = window.location.pathname;
+
+            links.forEach(link => {
+                const href = link.getAttribute('href');
+                if (href && path.startsWith(href)) {
+                    link.classList.add('text-red-600');
+                } else {
+                    link.classList.remove('text-red-600');
+                }
+            });
+        });
+    </script>
 
     <!-- Main Content -->
     <main>
@@ -143,3 +175,5 @@
     @stack('scripts')
 </body>
 </html>
+
+

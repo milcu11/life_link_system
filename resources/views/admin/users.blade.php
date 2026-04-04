@@ -53,7 +53,7 @@
                                     @if($user->id !== auth()->id())
                                         <form action="{{ route('admin.users.toggle', $user) }}" method="POST" style="display: inline;">
                                             @csrf
-                                            <button type="submit" class="inline-block {{ $user->is_active ? 'bg-red-100 hover:bg-red-200 text-red-700' : 'bg-green-100 hover:bg-green-200 text-green-700' }} px-3 py-2 rounded text-sm font-medium" 
+                                            <button type="submit" class="inline-block {{ $user->is_active ? 'bg-red-100 hover:bg-red-200 text-red-700' : 'bg-green-100 hover:bg-green-200 text-green-700' }} px-3 py-2 rounded text-sm font-medium cursor-pointer" 
                                                     title="{{ $user->is_active ? 'Deactivate' : 'Activate' }}" 
                                                     data-testid="toggle-user-{{ $user->id }}">
                                                 <i class="fas fa-{{ $user->is_active ? 'ban' : 'check' }} mr-1"></i> {{ $user->is_active ? 'Deactivate' : 'Activate' }}

@@ -6,7 +6,9 @@ use App\Models\BloodRequest;
 use App\Models\Donation;
 use App\Models\Donor;
 use App\Models\User;
+use App\Models\Matching;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class AdminController extends Controller
 {
@@ -31,7 +33,63 @@ class AdminController extends Controller
             ->take(5)
             ->get();
 
-        return view('admin.dashboard', compact('stats', 'recentRequests', 'recentDonations'));
+        // Get 6-month data for chart
+        $chartData = $this->getSixMonthChartData();
+
+        return view('admin.dashboard', compact('stats', 'recentRequests', 'recentDonations', 'chartData'));
+    }
+
+    private function getSixMonthChartData()
+    {
+        $sixMonthsAgo = Carbon::now()->subMonths(6)->startOfMonth();
+        $now = Carbon::now()->endOfMonth();
+
+        // Initialize months array
+        $months = [];
+        $currentDate = $sixMonthsAgo->copy();
+        while ($currentDate <= $now) {
+            $months[$currentDate->format('Y-m')] = $currentDate->format('M');
+            $currentDate->addMonth();
+        }
+
+        // Get donors data grouped by month
+        $donorsData = Donor::whereBetween('created_at', [$sixMonthsAgo, $now])
+            ->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as month, COUNT(*) as count")
+            ->groupBy('month')
+            ->pluck('count', 'month')
+            ->toArray();
+
+        // Get requests data grouped by month
+        $requestsData = BloodRequest::whereBetween('created_at', [$sixMonthsAgo, $now])
+            ->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as month, COUNT(*) as count")
+            ->groupBy('month')
+            ->pluck('count', 'month')
+            ->toArray();
+
+        // Get matches data grouped by month
+        $matchesData = Matching::whereBetween('created_at', [$sixMonthsAgo, $now])
+            ->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as month, COUNT(*) as count")
+            ->groupBy('month')
+            ->pluck('count', 'month')
+            ->toArray();
+
+        // Fill in missing months with 0
+        $donors = [];
+        $requests = [];
+        $matches = [];
+
+        foreach ($months as $monthKey => $monthLabel) {
+            $donors[] = $donorsData[$monthKey] ?? 0;
+            $requests[] = $requestsData[$monthKey] ?? 0;
+            $matches[] = $matchesData[$monthKey] ?? 0;
+        }
+
+        return [
+            'months' => array_values($months),
+            'donors' => $donors,
+            'requests' => $requests,
+            'matches' => $matches,
+        ];
     }
 
     public function donors()
@@ -104,6 +162,15 @@ class AdminController extends Controller
     {
         $appeal->load('donor.user');
         return view('admin.appeals.show', compact('appeal'));
+    }
+
+    public function appealDownload(\App\Models\DonorAppeal $appeal)
+    {
+        if (!$appeal->attachment_path || !file_exists(storage_path('app/' . $appeal->attachment_path))) {
+            abort(404, 'File not found.');
+        }
+
+        return response()->download(storage_path('app/' . $appeal->attachment_path));
     }
 
     public function appealReview(\Illuminate\Http\Request $request, \App\Models\DonorAppeal $appeal)

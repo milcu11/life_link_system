@@ -3,9 +3,12 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\BloodRequestController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DonationController;
 use App\Http\Controllers\DonorController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MatchingController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ReportController;
@@ -18,9 +21,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 // Public routes
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
 // Authentication routes
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -28,6 +29,17 @@ Route::post('/login', [LoginController::class, 'login']);
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('/register', [RegisterController::class, 'register']);
+
+// Password Reset routes
+Route::prefix('password')->name('password.')->group(function () {
+    Route::get('/forgot', [PasswordResetController::class, 'showForgotPasswordForm'])->name('forgot');
+    Route::post('/send-code', [PasswordResetController::class, 'sendResetCode'])->name('send-code');
+    Route::get('/verify', [PasswordResetController::class, 'showVerifyForm'])->name('verify');
+    Route::post('/verify', [PasswordResetController::class, 'verifyCode'])->name('verify.check');
+    Route::get('/reset', [PasswordResetController::class, 'showResetForm'])->name('reset');
+    Route::post('/reset', [PasswordResetController::class, 'resetPassword'])->name('reset.confirm');
+    Route::post('/resend', [PasswordResetController::class, 'resendCode'])->name('resend');
+});
 
 // Protected routes
 Route::middleware(['auth'])->group(function () {
@@ -46,6 +58,16 @@ Route::middleware(['auth'])->group(function () {
         // Denied/appeal flow
         Route::get('/denied', [\App\Http\Controllers\DonorAppealController::class, 'denied'])->name('denied');
         Route::post('/appeal', [\App\Http\Controllers\DonorAppealController::class, 'store'])->name('appeal.store');
+
+        // Scheduling and appointment routes
+        Route::get('/drives', [\App\Http\Controllers\Donor\AppointmentController::class, 'index'])->name('drives.index');
+        Route::post('/drives/{drive}/book', [\App\Http\Controllers\Donor\AppointmentController::class, 'book'])->name('drives.book');
+        Route::put('/appointments/{appointment}/cancel', [\App\Http\Controllers\Donor\AppointmentController::class, 'cancel'])->name('appointments.cancel');
+
+        // Messages routes
+        Route::get('/messages', [\App\Http\Controllers\Donor\MessageController::class, 'index'])->name('messages.index');
+        Route::get('/messages/{hospital}', [\App\Http\Controllers\Donor\MessageController::class, 'show'])->name('messages.show');
+        Route::post('/messages/{hospital}', [\App\Http\Controllers\Donor\MessageController::class, 'store'])->name('messages.store');
     });
     
     // Hospital routes
@@ -57,6 +79,26 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/requests/{request}', [BloodRequestController::class, 'update'])->name('requests.update');
         Route::delete('/requests/{request}', [BloodRequestController::class, 'destroy'])->name('requests.destroy');
         Route::get('/matches/{request}', [MatchingController::class, 'viewMatches'])->name('matches');
+        
+        // Donation routes
+        Route::put('/donations/{donation}/complete', [DonationController::class, 'complete'])->name('donations.complete');
+        Route::put('/donations/{donation}/cancel', [DonationController::class, 'cancel'])->name('donations.cancel');
+
+        // Inventory routes
+        Route::resource('inventory', \App\Http\Controllers\Hospital\InventoryController::class);
+
+        // Reports routes
+        Route::get('reports', [\App\Http\Controllers\Hospital\ReportController::class, 'index'])->name('reports.index');
+        Route::get('reports/export', [\App\Http\Controllers\Hospital\ReportController::class, 'export'])->name('reports.export');
+
+        // Scheduling routes
+        Route::resource('drives', \App\Http\Controllers\Hospital\BloodDriveController::class);
+        Route::post('drives/{drive}/cancel', [\App\Http\Controllers\Hospital\BloodDriveController::class, 'cancel'])->name('drives.cancel');
+
+        // Messages routes
+        Route::get('messages', [\App\Http\Controllers\Hospital\MessageController::class, 'index'])->name('messages.index');
+        Route::get('messages/{donor}', [\App\Http\Controllers\Hospital\MessageController::class, 'show'])->name('messages.show');
+        Route::post('messages/{donor}', [\App\Http\Controllers\Hospital\MessageController::class, 'store'])->name('messages.store');
     });
     
     // Admin routes
@@ -77,6 +119,7 @@ Route::middleware(['auth'])->group(function () {
         // Appeals management
         Route::get('/appeals', [AdminController::class, 'appeals'])->name('appeals');
         Route::get('/appeals/{appeal}', [AdminController::class, 'appealShow'])->name('appeals.show');
+        Route::get('/appeals/{appeal}/download', [AdminController::class, 'appealDownload'])->name('appeals.download');
         Route::post('/appeals/{appeal}/review', [\App\Http\Controllers\AdminController::class, 'appealReview'])->name('appeals.review');
     });
     

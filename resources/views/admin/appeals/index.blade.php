@@ -3,8 +3,9 @@
 @section('title','Appeals')
 
 @section('content')
-<div class="max-w-6xl mx-auto py-8">
-    <h1 class="text-2xl font-bold mb-4">Donor Appeals</h1>
+<div class="bg-gray-50 min-h-screen py-8">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h1 class="text-2xl font-bold mb-4">Donor Appeals</h1>
     <div class="bg-white rounded shadow overflow-hidden">
         <table class="w-full">
             <thead class="bg-gray-50">

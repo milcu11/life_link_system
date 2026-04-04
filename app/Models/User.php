@@ -18,6 +18,9 @@ class User extends Authenticatable
         'password',
         'role',
         'is_active',
+        'password_reset_code',
+        'password_reset_code_expires_at',
+        'password_reset_last_sent_at',
     ];
 
     protected $hidden = [
@@ -29,6 +32,8 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
         'is_active' => 'boolean',
+        'password_reset_code_expires_at' => 'datetime',
+        'password_reset_last_sent_at' => 'datetime',
     ];
 
     public function donor(): HasOne
@@ -44,6 +49,16 @@ class User extends Authenticatable
     public function notifications(): HasMany
     {
         return $this->hasMany(Notification::class);
+    }
+
+    public function bloodDrives(): HasMany
+    {
+        return $this->hasMany(BloodDrive::class, 'hospital_id');
+    }
+
+    public function appointments(): HasMany
+    {
+        return $this->hasMany(Appointment::class, 'donor_id');
     }
 
     public function isAdmin(): bool

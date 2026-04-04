@@ -4,25 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Blood Donation System</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="bg-gray-50">
-    <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-md w-full space-y-8">
-            <div>
+<body class="h-screen overflow-hidden bg-gray-100">
+    <div class="h-screen flex items-center justify-center py-8 px-4 sm:px-6 lg:px-8 relative">
+        <a href="{{ route('home') }}" class="absolute top-4 left-4 text-red-600 hover:text-red-500">
+            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+        </a>
+        <div class="max-w-md w-full overflow-auto" style="max-height: calc(100vh - 2rem);">
+            <div class="bg-white p-6 sm:p-8 rounded-xl shadow-lg border border-gray-200">
                 <div class="flex justify-center">
-                    <svg class="h-16 w-16 text-red-600" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                    </svg>
+                    <img src="{{ asset('images/lifelink-logo.svg') }}" alt="LifeLink Logo" class="lifelink-logo-form" />
                 </div>
-                <h2 class="mt-6 text-center text-3xl font-bold text-gray-900">Sign in to your account</h2>
-                <p class="mt-2 text-center text-sm text-gray-600">
-                    Or
-                    <a href="{{ route('register') }}" class="font-medium text-red-600 hover:text-red-500">create a new account</a>
-                </p>
-            </div>
-            
-            <form class="mt-8 space-y-6" method="POST" action="{{ route('login') }}">
+                <h2 class="mt-4 text-center text-2xl sm:text-3xl font-bold text-gray-900">Log into your account</h2>
+
+                <form class="mt-6 space-y-4" method="POST" action="{{ route('login') }}">
                 @csrf
                 
                 @if ($errors->any())
@@ -58,22 +56,30 @@
                             Remember me
                         </label>
                     </div>
+                    <div class="text-sm">
+                        <a href="{{ route('password.forgot') }}" class="font-medium text-red-600 hover:text-red-500">
+                            Forgot password?
+                        </a>
+                    </div>
                 </div>
 
                 <div>
                     <button type="submit" 
-                            class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                            class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 cursor-pointer transition duration-200">
                         Sign in
                     </button>
                 </div>
 
                 <div class="text-center">
-                    <a href="{{ route('home') }}" class="text-sm text-red-600 hover:text-red-500">
-                        ← Back to home
-                    </a>
+                    <button type="button" onclick="window.location.href='{{ route('register') }}'" class="group relative w-full flex justify-center py-2 px-4 border border-red-600 text-sm font-medium rounded-md text-red-600 bg-white hover:bg-red-50 hover:text-red-700 hover:border-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 cursor-pointer transition duration-200">
+                        Create a New Account
+                    </button>
                 </div>
             </form>
         </div>
     </div>
+</div>
 </body>
 </html>
+
+

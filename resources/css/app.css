@@ -1,6 +1,24 @@
 
 @import "tailwindcss";
 
+/* Keep vertical scrollbar stable across pages and prevent layout shift */
+body { overflow-y: scroll; }
+
+/* Global button cursor style */
+button,
+input[type="button"],
+input[type="submit"],
+input[type="reset"],
+.btn,
+a,
+[role="button"],
+.dropdown a,
+.dropdown button,
+#userDropdown a,
+#userDropdown button {
+	cursor: pointer !important;
+}
+
 /* Report buttons: pill gradient, centered icon, subtle shadow */
 @layer components {
 	.report-card .btn {
@@ -19,6 +37,7 @@
 		text-decoration: none;
 		-webkit-font-smoothing:antialiased;
 		justify-content: center;
+		cursor: pointer;
 	}
 
 	.report-card .btn i {
@@ -52,4 +71,115 @@
 	.report-content{padding:1.25rem 1.5rem;flex:1;display:flex;flex-direction:column;justify-content:space-between}
 	.report-title{font-weight:700;margin-bottom:.5rem;color:#0f172a}
 	.report-description{color:#64748b;margin-bottom:1rem}
+
+	/* Donor Profile Page Layout - Two Row Structure */
+	.page-container {
+		padding-top: 20px;
+		margin: 0 auto;
+	}
+
+	/* BACK ARROW ROW - Separate from form, aligned left */
+	.back-row {
+		max-width: 800px;
+		margin: 0 auto 20px auto;
+		padding: 0 20px;
+	}
+
+	.back-button {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		color: #dc2626;
+		text-decoration: none;
+		cursor: pointer;
+	}
+
+	/* FORM ROW - Centered wrapper for form card */
+	.form-wrapper {
+		display: flex;
+		justify-content: center;
+		padding: 0 20px;
+	}
+
+	/* FORM CARD - Centered with proper sizing */
+	.form-card {
+		width: 100%;
+		max-width: 800px;
+		background: #ffffff;
+		border-radius: 0.5rem;
+		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+		overflow: hidden;
+		margin-top: 10px;
+	}
+
+	/* Responsive adjustments */
+	@media (max-width: 768px) {
+		.page-container {
+			padding-top: 15px;
+		}
+
+		.back-row {
+			max-width: 100%;
+			margin: 0 0 15px 0;
+			padding: 0 15px;
+		}
+
+		.form-wrapper {
+			padding: 0 15px;
+		}
+
+		.form-card {
+			max-width: 100%;
+			margin-top: 10px;
+		}
+	}
 }
+
+/* Reduce table vertical overflow and keep donor info on one screen */
+.donor-table-responsive table {
+	font-size: 0.875rem;
+}
+.donor-table-responsive td,
+.donor-table-responsive th {
+	white-space: normal;
+	word-wrap: break-word;
+	padding: 0.5rem;
+}
+.donor-table-responsive {
+	overflow: visible !important;
+}
+.donor-table-responsive table {
+	max-height: none !important;
+}
+
+/* LifeLink logo size variants - outside @layer so Tailwind processes them */
+/* Navbar/header version - smaller */
+.lifelink-logo-nav {
+	width: clamp(60px, 8vw, 80px) !important;
+	min-width: 60px !important;
+	max-width: 100% !important;
+	height: auto !important;
+	object-fit: contain;
+}
+
+/* Form cards version - medium */
+.lifelink-logo-form {
+	width: clamp(80px, 10vw, 100px) !important;
+	min-width: 80px !important;
+	max-width: 100% !important;
+	height: auto !important;
+	object-fit: contain;
+}
+
+/* Fallback class for backward compatibility */
+.lifelink-logo {
+	width: clamp(80px, 10vw, 100px) !important;
+	min-width: 80px !important;
+	max-width: 100% !important;
+	height: auto !important;
+}
+
+.lifelink-logo.object-contain {
+	object-fit: contain;
+}
+

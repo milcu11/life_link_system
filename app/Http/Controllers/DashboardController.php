@@ -48,8 +48,10 @@ class DashboardController extends Controller
             'last_donation' => $donor->last_donation_date?->format('M d, Y') ?? 'Never',
         ];
         
+        // only include donations with an existing blood request to prevent null-relations
         $recentDonations = $donor->donations()
-            ->with('request')
+            ->whereHas('request')
+            ->with('request.hospital') // eager load hospital too since view needs it
             ->latest()
             ->take(5)
             ->get();
@@ -75,6 +77,9 @@ class DashboardController extends Controller
             'total_matches' => Matching::whereHas('request', function($q) use ($user) {
                 $q->where('hospital_id', $user->id);
             })->count(),
+            'total_inventory' => \App\Models\BloodInventory::where('hospital_id', $user->id)->sum('quantity'),
+            'low_stock_items' => \App\Models\BloodInventory::where('hospital_id', $user->id)->lowStock()->count(),
+            'expiring_soon_items' => \App\Models\BloodInventory::where('hospital_id', $user->id)->expiringSoon()->count(),
         ];
         
         $recentRequests = BloodRequest::where('hospital_id', $user->id)

@@ -3,15 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blood Donation System - Save Lives</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>LifeLink - Save Lives</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         .hero-bg {
-            background: linear-gradient(135deg, #991B1B 0%, #DC2626 100%);
+            position: relative;
+            overflow: hidden;
         }
+
+        .hero-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(153, 27, 27, 0.5) 0%, rgba(220, 38, 38, 0.5) 100%);
+            z-index: 1;
+        }
+
+        .slideshow-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 0;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .slide.active {
+            opacity: 0.95;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-content h1 {
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.6), 0 0 10px rgba(0, 0, 0, 0.4);
+        }
+
+        .hero-content p {
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.6);
+        }
+
         .card-hover:hover {
             transform: translateY(-4px);
             box-shadow: 0 10px 25px rgba(220, 38, 38, 0.2);
+        }
+
+        .donor-btn {
+            transition: all 0.3s ease;
+        }
+
+        .donor-btn:hover {
+            transform: scale(1.08) translateY(-2px);
+            box-shadow: 0 8px 20px rgba(220, 38, 38, 0.4);
+            background-color: #fef2f2;
+        }
+        form[action*="logout"] button {
+            cursor: pointer;
         }
     </style>
 </head>
@@ -21,17 +85,16 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
-                    <svg class="h-8 w-8 text-red-600" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                    </svg>
-                    <span class="ml-2 text-xl font-bold text-gray-900">Blood Donation System</span>
+                    <a href="{{ route('home') }}" class="flex items-center hover:opacity-80 transition" title="LifeLink - Blood Donation System">
+                        <img src="{{ asset('images/lifelink-logo.svg') }}" alt="LifeLink Logo" class="lifelink-logo-nav" />
+                    </a>
                 </div>
                 <div class="flex items-center space-x-4">
                     @auth
                         <a href="{{ route('dashboard') }}" class="text-gray-700 hover:text-red-600 px-3 py-2 rounded-md font-medium">Dashboard</a>
                         <form method="POST" action="{{ route('logout') }}" class="inline">
                             @csrf
-                            <button type="submit" class="text-gray-700 hover:text-red-600 px-3 py-2 rounded-md font-medium">Logout</button>
+                            <button type="submit" class="text-gray-700 hover:text-red-600 px-3 py-2 rounded-md font-medium">Sign Out</button>
                         </form>
                     @else
                         <a href="{{ route('login') }}" class="text-gray-700 hover:text-red-600 px-3 py-2 rounded-md font-medium">Login</a>
@@ -43,19 +106,21 @@
     </nav>
 
     <!-- Hero Section -->
-    <div class="hero-bg">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-            <div class="grid md:grid-cols-2 gap-12 items-center">
-                <div class="text-white">
+    <div class="hero-bg min-h-screen flex items-center">
+        <div class="slideshow-container">
+            <div class="slide active" style="background-image: url('{{ asset('images/slide 1.jpg') }}');"></div>
+            <div class="slide" style="background-image: url('{{ asset('images/slide 2.jpg') }}');"></div>
+            <div class="slide" style="background-image: url('{{ asset('images/slide 3.jpg') }}');"></div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+            <div class="flex justify-center items-center hero-content">
+                <div class="text-white text-center max-w-2xl">
                     <h1 class="text-5xl font-bold mb-6">Save Lives Through Blood Donation</h1>
                     <p class="text-xl mb-8 text-red-100">Connect donors with those in need. Real-time matching, emergency alerts, and location-based donor tracking.</p>
-                    <div class="flex space-x-4">
-                        <a href="{{ route('register') }}" class="bg-white text-red-600 px-8 py-3 rounded-lg font-semibold hover:bg-red-50 transition">Become a Donor</a>
+                    <div class="flex justify-center space-x-4">
+                        <a href="{{ route('register') }}" class="donor-btn bg-white text-red-600 px-8 py-3 rounded-lg font-semibold">Become a Donor</a>
                         <a href="{{ route('login') }}" class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-red-600 transition">Hospital Login</a>
                     </div>
-                </div>
-                <div class="hidden md:block">
-                    <img src="https://mgx-backend-cdn.metadl.com/generate/images/619966/2026-01-29/52854561-c9f3-4b7b-be10-42273bfdb102.png" alt="Blood Donation" class="rounded-lg shadow-2xl">
                 </div>
             </div>
         </div>
@@ -143,19 +208,19 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid md:grid-cols-4 gap-8 text-center text-white">
                 <div>
-                    <div class="text-5xl font-bold mb-2">1000+</div>
+                    <div class="text-5xl font-bold mb-2">{{ number_format($stats['total_donors']) }}+</div>
                     <div class="text-xl text-red-100">Registered Donors</div>
                 </div>
                 <div>
-                    <div class="text-5xl font-bold mb-2">500+</div>
+                    <div class="text-5xl font-bold mb-2">{{ number_format($stats['lives_saved']) }}+</div>
                     <div class="text-xl text-red-100">Lives Saved</div>
                 </div>
                 <div>
-                    <div class="text-5xl font-bold mb-2">50+</div>
+                    <div class="text-5xl font-bold mb-2">{{ number_format($stats['partner_hospitals']) }}+</div>
                     <div class="text-xl text-red-100">Partner Hospitals</div>
                 </div>
                 <div>
-                    <div class="text-5xl font-bold mb-2">24/7</div>
+                    <div class="text-5xl font-bold mb-2">{{ $stats['emergency_support'] }}</div>
                     <div class="text-xl text-red-100">Emergency Support</div>
                 </div>
             </div>
@@ -177,9 +242,30 @@
     <!-- Footer -->
     <footer class="bg-gray-900 text-white py-8">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <p>&copy; 2024 Blood Donation System. All rights reserved.</p>
+            <p>&copy; 2026 LifeLink. All rights reserved.</p>
             <p class="text-gray-400 mt-2">Saving lives through technology and compassion</p>
         </div>
     </footer>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        function showSlide(n) {
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[n].classList.add('active');
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            showSlide(currentSlide);
+        }
+
+        // Auto-rotate slides every 5 seconds
+        setInterval(nextSlide, 5000);
+    </script>
 </body>
 </html>
+
+

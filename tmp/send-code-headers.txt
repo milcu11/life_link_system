@@ -1,0 +1,20 @@
+HTTP/1.1 302 Found
+Host: 127.0.0.1:8000
+Connection: close
+X-Powered-By: PHP/8.2.12
+Cache-Control: no-cache, private
+Date: Wed, 18 Mar 2026 04:13:38 GMT
+Location: http://127.0.0.1:8000/password/verify
+Content-Type: text/html; charset=utf-8
+Set-Cookie: XSRF-TOKEN=eyJpdiI6IituNnhoS3FzbnJOWHJYMXZPRzRRMEE9PSIsInZhbHVlIjoiS1AwVE5BQXNKbUlBRFg4TkhIVHByUmVpc1lsQWhFWFo3bzRHS09qeVd5KzEya0dndkVoNitDbkg4aWxSY1RidnNiSGwxRFArSWh4WURCeGUzSGhZS3BvSzI0NitiRS9wQ1NGNTY4R2E0VGdheTdRUFBZcERVMURkbnk1RklWNnYiLCJtYWMiOiI1MmQ1NGNiYjA0ZGY3MDVlY2M2MDc4NDEzZjRmYTZlNzIwNThjM2I1NmNlZDk1OGUyNWU4MmNiY2I2M2I5Nzc3IiwidGFnIjoiIn0%3D; expires=Wed, 18 Mar 2026 06:13:38 GMT; Max-Age=7200; path=/; samesite=lax
+Set-Cookie: laravel-session=eyJpdiI6IkpzWXl1eUk3dWZFZXZvKzhrOENjSVE9PSIsInZhbHVlIjoidkU5ZXVJZ2Q3MWZtQ1FVSUwzOW15QXpLTEppOENaMVBIRHErZExvejVIZkZiY3U2YXNQUVFoQ3JNeGQ5Szd1b2F1ZWVRbGxVY2pmN3pIVjd1czk2U3RwSDBXRHZRd1NGakNXYXJUc1Y4VlMrRlkvSDNqRCszcFE2eXJCcU1oRDIiLCJtYWMiOiI3OWRhMzNmMzdhOGI5NDIwYmFjYWIxODhkZjY3OWZhZTc3M2NkM2QyYjA4NWFmOGFiMTQxMTI5YTllZGVlYzczIiwidGFnIjoiIn0%3D; expires=Wed, 18 Mar 2026 06:13:38 GMT; Max-Age=7200; path=/; httponly; samesite=lax
+
+HTTP/1.1 419 unknown status
+Host: 127.0.0.1:8000
+Connection: close
+X-Powered-By: PHP/8.2.12
+Cache-Control: no-cache, private
+date: Wed, 18 Mar 2026 04:13:39 GMT
+Content-Type: text/html; charset=utf-8
+Set-Cookie: laravel-session=eyJpdiI6IjJseUhsQzdYNk5mRjJuQ0F1WmJkbHc9PSIsInZhbHVlIjoiVkt2OWpjUkw1cmNzS3k2L2hRYmJ3UWh0WG1VbUY1REl5NHozY2xUWGRiN0FNNmRHZWRNM0trdFRkS1RWUVlJcURKM20vdWRzWDR1Ylk4L0FoeHVVR3ZFNkJaNU82M1VMRCtXVXRLbDBPM0pqSkhWc1F5Tm1kMXZVNU9najYrc1kiLCJtYWMiOiI1ODQzY2I1MzRiNTQyMWE5MDIwOWJiOGExNzkzMDk4YTUyZDAxNjM3MjFmMjgwODE5ZWExMTVmOGQ4MDY5NDNkIiwidGFnIjoiIn0%3D; expires=Wed, 18 Mar 2026 06:13:39 GMT; Max-Age=7200; path=/; httponly; samesite=lax
+
