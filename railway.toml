@@ -1,0 +1,8 @@
+[build]
+builder = "RAILPACK"
+
+[deploy]
+preDeployCommand = ["chmod +x ./railway/init-app.sh && sh ./railway/init-app.sh"]
+startCommand = "php-fpm"
+healthcheckPath = "/"
+healthcheckTimeout = 100
