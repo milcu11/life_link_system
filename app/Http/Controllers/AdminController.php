@@ -220,7 +220,7 @@ class AdminController extends Controller
 
             try {
                 \Illuminate\Support\Facades\Log::info('Attempting to send approval email to: ' . $donor->user->email);
-                \Illuminate\Support\Facades\Mail::mailable(new \App\Mail\DonorVerificationStatus($donor, true))->send();
+                \Illuminate\Support\Facades\Mail::send(new \App\Mail\DonorVerificationStatus($donor, true));
                 \Illuminate\Support\Facades\Log::info('Approval email sent successfully to: ' . $donor->user->email);
             } catch (\Exception $e) {
                 \Illuminate\Support\Facades\Log::error('Mail sending failed: ' . $e->getMessage() . ' | Trace: ' . $e->getTraceAsString());
@@ -245,7 +245,7 @@ class AdminController extends Controller
 
             try {
                 \Illuminate\Support\Facades\Log::info('Attempting to send rejection email to: ' . $donor->user->email);
-                \Illuminate\Support\Facades\Mail::mailable(new \App\Mail\DonorVerificationStatus($donor, false))->send();
+                \Illuminate\Support\Facades\Mail::send(new \App\Mail\DonorVerificationStatus($donor, false));
                 \Illuminate\Support\Facades\Log::info('Rejection email sent successfully to: ' . $donor->user->email);
             } catch (\Exception $e) {
                 \Illuminate\Support\Facades\Log::error('Mail sending failed: ' . $e->getMessage() . ' | Trace: ' . $e->getTraceAsString());
