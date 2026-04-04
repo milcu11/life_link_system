@@ -218,14 +218,14 @@ class AdminController extends Controller
                 'verified_at' => now(),
             ]);
 
-            // Send email notification
+            // Queue email notification asynchronously
             if ($donor->user) {
                 try {
-                    \Illuminate\Support\Facades\Log::info('Sending approval email to: ' . $donor->user->email);
-                    \Illuminate\Support\Facades\Mail::send(new \App\Mail\DonorVerificationStatus($donor, true));
-                    \Illuminate\Support\Facades\Log::info('Approval email sent successfully to: ' . $donor->user->email);
+                    \Illuminate\Support\Facades\Log::info('Queueing approval email to: ' . $donor->user->email);
+                    \Illuminate\Support\Facades\Mail::queue(new \App\Mail\DonorVerificationStatus($donor, true));
+                    \Illuminate\Support\Facades\Log::info('Approval email queued successfully for: ' . $donor->user->email);
                 } catch (\Throwable $e) {
-                    \Illuminate\Support\Facades\Log::warning('Email sending failed (continuing): ' . $e->getMessage());
+                    \Illuminate\Support\Facades\Log::warning('Email queueing failed (continuing): ' . $e->getMessage());
                     // Don't fail the approval just because email failed
                 }
             }
@@ -247,14 +247,14 @@ class AdminController extends Controller
                 'rejection_reason' => $request->input('reason'),
             ]);
 
-            // Send email notification
+            // Queue email notification asynchronously
             if ($donor->user) {
                 try {
-                    \Illuminate\Support\Facades\Log::info('Sending rejection email to: ' . $donor->user->email);
-                    \Illuminate\Support\Facades\Mail::send(new \App\Mail\DonorVerificationStatus($donor, false));
-                    \Illuminate\Support\Facades\Log::info('Rejection email sent successfully to: ' . $donor->user->email);
+                    \Illuminate\Support\Facades\Log::info('Queueing rejection email to: ' . $donor->user->email);
+                    \Illuminate\Support\Facades\Mail::queue(new \App\Mail\DonorVerificationStatus($donor, false));
+                    \Illuminate\Support\Facades\Log::info('Rejection email queued successfully for: ' . $donor->user->email);
                 } catch (\Throwable $e) {
-                    \Illuminate\Support\Facades\Log::warning('Email sending failed (continuing): ' . $e->getMessage());
+                    \Illuminate\Support\Facades\Log::warning('Email queueing failed (continuing): ' . $e->getMessage());
                     // Don't fail the rejection just because email failed
                 }
             }
