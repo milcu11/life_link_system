@@ -218,18 +218,11 @@ class AdminController extends Controller
                 'verified_at' => now(),
             ]);
 
-            // Queue email to be sent asynchronously (non-blocking)
-            if ($donor->user) {
-                try {
-                    \Illuminate\Support\Facades\Log::info('Queuing approval email to: ' . $donor->user->email);
-                    \Illuminate\Support\Facades\Mail::queue(new \App\Mail\DonorVerificationStatus($donor, true));
-                } catch (\Throwable $e) {
-                    \Illuminate\Support\Facades\Log::warning('Email queueing failed (continuing): ' . $e->getMessage());
-                    // Don't fail the approval just because email failed
-                }
-            }
+            // Email sending temporarily disabled due to SMTP timeout issues
+            // TODO: Re-enable when using a proper email service
+            \Illuminate\Support\Facades\Log::info('Donor approved: ' . $donor->id);
 
-            return redirect()->back()->with('success', 'Donor approved. Verification email will be sent shortly.');
+            return redirect()->back()->with('success', 'Donor approved successfully.');
         } catch (\Exception $e) {
             \Illuminate\Support\Facades\Log::error('Error approving donor: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Error approving donor: ' . $e->getMessage());
@@ -246,18 +239,11 @@ class AdminController extends Controller
                 'rejection_reason' => $request->input('reason'),
             ]);
 
-            // Queue email to be sent asynchronously (non-blocking)
-            if ($donor->user) {
-                try {
-                    \Illuminate\Support\Facades\Log::info('Queuing rejection email to: ' . $donor->user->email);
-                    \Illuminate\Support\Facades\Mail::queue(new \App\Mail\DonorVerificationStatus($donor, false));
-                } catch (\Throwable $e) {
-                    \Illuminate\Support\Facades\Log::warning('Email queueing failed (continuing): ' . $e->getMessage());
-                    // Don't fail the rejection just because email failed
-                }
-            }
+            // Email sending temporarily disabled due to SMTP timeout issues
+            // TODO: Re-enable when using a proper email service
+            \Illuminate\Support\Facades\Log::info('Donor rejected: ' . $donor->id);
 
-            return redirect()->back()->with('success', 'Donor rejected. Notification email will be sent shortly.');
+            return redirect()->back()->with('success', 'Donor rejected successfully.');
         } catch (\Exception $e) {
             \Illuminate\Support\Facades\Log::error('Error rejecting donor: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Error rejecting donor: ' . $e->getMessage());
