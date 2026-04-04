@@ -218,15 +218,14 @@ class AdminController extends Controller
                 'verified_at' => now(),
             ]);
 
-            try {
-                \Illuminate\Support\Facades\Log::info('Attempting to send approval email to: ' . $donor->user->email);
-                \Illuminate\Support\Facades\Mail::send(new \App\Mail\DonorVerificationStatus($donor, true));
-                \Illuminate\Support\Facades\Log::info('Approval email sent successfully to: ' . $donor->user->email);
-            } catch (\Exception $e) {
-                \Illuminate\Support\Facades\Log::error('Mail sending failed: ' . $e->getMessage() . ' | Trace: ' . $e->getTraceAsString());
+            // Queue email to be sent asynchronously
+            if ($donor->user) {
+                \Illuminate\Support\Facades\Log::info('Queuing approval email to: ' . $donor->user->email);
+                \Illuminate\Support\Facades\Mail::queue(new \App\Mail\DonorVerificationStatus($donor, true));
+                \Illuminate\Support\Facades\Log::info('Approval email queued successfully for: ' . $donor->user->email);
             }
 
-            return redirect()->back()->with('success', 'Donor approved and verification email sent.');
+            return redirect()->back()->with('success', 'Donor approved. Verification email will be sent shortly.');
         } catch (\Exception $e) {
             \Illuminate\Support\Facades\Log::error('Error approving donor: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Error approving donor: ' . $e->getMessage());
@@ -243,15 +242,14 @@ class AdminController extends Controller
                 'rejection_reason' => $request->input('reason'),
             ]);
 
-            try {
-                \Illuminate\Support\Facades\Log::info('Attempting to send rejection email to: ' . $donor->user->email);
-                \Illuminate\Support\Facades\Mail::send(new \App\Mail\DonorVerificationStatus($donor, false));
-                \Illuminate\Support\Facades\Log::info('Rejection email sent successfully to: ' . $donor->user->email);
-            } catch (\Exception $e) {
-                \Illuminate\Support\Facades\Log::error('Mail sending failed: ' . $e->getMessage() . ' | Trace: ' . $e->getTraceAsString());
+            // Queue email to be sent asynchronously
+            if ($donor->user) {
+                \Illuminate\Support\Facades\Log::info('Queuing rejection email to: ' . $donor->user->email);
+                \Illuminate\Support\Facades\Mail::queue(new \App\Mail\DonorVerificationStatus($donor, false));
+                \Illuminate\Support\Facades\Log::info('Rejection email queued successfully for: ' . $donor->user->email);
             }
 
-            return redirect()->back()->with('success', 'Donor rejected and notification email sent.');
+            return redirect()->back()->with('success', 'Donor rejected. Notification email will be sent shortly.');
         } catch (\Exception $e) {
             \Illuminate\Support\Facades\Log::error('Error rejecting donor: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Error rejecting donor: ' . $e->getMessage());
