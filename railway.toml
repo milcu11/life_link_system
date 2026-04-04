@@ -5,3 +5,7 @@ builder = "RAILPACK"
 preDeployCommand = ["chmod +x ./railway/init-app.sh && ./railway/init-app.sh"]
 healthcheckPath = "/"
 healthcheckTimeout = 300
+
+[processes]
+web = "php-fpm"
+worker = "php artisan queue:work --sleep=3 --tries=3 --max-jobs=1000 --timeout=90"
