@@ -219,10 +219,11 @@ class AdminController extends Controller
             ]);
 
             try {
-                \Illuminate\Support\Facades\Mail::send(new \App\Mail\DonorVerificationStatus($donor, true));
+                \Illuminate\Support\Facades\Log::info('Attempting to send approval email to: ' . $donor->user->email);
+                \Illuminate\Support\Facades\Mail::mailable(new \App\Mail\DonorVerificationStatus($donor, true))->send();
+                \Illuminate\Support\Facades\Log::info('Approval email sent successfully to: ' . $donor->user->email);
             } catch (\Exception $e) {
-                // mail not configured
-                \Illuminate\Support\Facades\Log::warning('Mail sending failed: ' . $e->getMessage());
+                \Illuminate\Support\Facades\Log::error('Mail sending failed: ' . $e->getMessage() . ' | Trace: ' . $e->getTraceAsString());
             }
 
             return redirect()->back()->with('success', 'Donor approved and verification email sent.');
@@ -243,10 +244,11 @@ class AdminController extends Controller
             ]);
 
             try {
-                \Illuminate\Support\Facades\Mail::send(new \App\Mail\DonorVerificationStatus($donor, false));
+                \Illuminate\Support\Facades\Log::info('Attempting to send rejection email to: ' . $donor->user->email);
+                \Illuminate\Support\Facades\Mail::mailable(new \App\Mail\DonorVerificationStatus($donor, false))->send();
+                \Illuminate\Support\Facades\Log::info('Rejection email sent successfully to: ' . $donor->user->email);
             } catch (\Exception $e) {
-                // mail not configured
-                \Illuminate\Support\Facades\Log::warning('Mail sending failed: ' . $e->getMessage());
+                \Illuminate\Support\Facades\Log::error('Mail sending failed: ' . $e->getMessage() . ' | Trace: ' . $e->getTraceAsString());
             }
 
             return redirect()->back()->with('success', 'Donor rejected and notification email sent.');
