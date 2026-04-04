@@ -212,36 +212,48 @@ class AdminController extends Controller
 
     public function approveDonor(Donor $donor)
     {
-        $donor->update([
-            'is_verified' => true,
-            'verified_at' => now(),
-        ]);
-
         try {
-            \Illuminate\Support\Facades\Mail::send(new \App\Mail\DonorVerificationStatus($donor, true));
-        } catch (\Exception $e) {
-            // mail not configured
-        }
+            $donor->update([
+                'is_verified' => true,
+                'verified_at' => now(),
+            ]);
 
-        return redirect()->back()->with('success', 'Donor approved and verification email sent.');
+            try {
+                \Illuminate\Support\Facades\Mail::send(new \App\Mail\DonorVerificationStatus($donor, true));
+            } catch (\Exception $e) {
+                // mail not configured
+                \Illuminate\Support\Facades\Log::warning('Mail sending failed: ' . $e->getMessage());
+            }
+
+            return redirect()->back()->with('success', 'Donor approved and verification email sent.');
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Error approving donor: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Error approving donor: ' . $e->getMessage());
+        }
     }
 
     public function rejectDonor(Request $request, Donor $donor)
     {
-        $request->validate(['reason' => 'nullable|string|max:1000']);
-
-        $donor->update([
-            'is_verified' => false,
-            'rejection_reason' => $request->input('reason'),
-        ]);
-
         try {
-            \Illuminate\Support\Facades\Mail::send(new \App\Mail\DonorVerificationStatus($donor, false));
-        } catch (\Exception $e) {
-            // mail not configured
-        }
+            $request->validate(['reason' => 'nullable|string|max:1000']);
 
-        return redirect()->back()->with('success', 'Donor rejected and notification email sent.');
+            $donor->update([
+                'is_verified' => false,
+                'rejection_reason' => $request->input('reason'),
+            ]);
+
+            try {
+                \Illuminate\Support\Facades\Mail::send(new \App\Mail\DonorVerificationStatus($donor, false));
+            } catch (\Exception $e) {
+                // mail not configured
+                \Illuminate\Support\Facades\Log::warning('Mail sending failed: ' . $e->getMessage());
+            }
+
+            return redirect()->back()->with('success', 'Donor rejected and notification email sent.');
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Error rejecting donor: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Error rejecting donor: ' . $e->getMessage());
+        }
     }
 
     public function downloadVerificationDocument(Donor $donor)
