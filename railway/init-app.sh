@@ -16,6 +16,10 @@ php artisan tinker --execute="try { DB::connection()->getPdo(); echo 'Database c
 echo "Running database migrations..."
 php artisan migrate --force
 
+# Verify migrations ran
+echo "Checking if blood_inventory table exists..."
+php artisan tinker --execute="if (Schema::hasTable('blood_inventory')) { echo 'blood_inventory table exists'; } else { echo 'blood_inventory table missing!'; exit(1); }"
+
 # Clear and cache config
 echo "Clearing and caching configuration..."
 php artisan config:clear
