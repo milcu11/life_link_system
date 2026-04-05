@@ -83,4 +83,9 @@ class Donor extends Model
 
         return $compatibility[$this->blood_type] ?? [];
     }
+
+    public function getLastDonationDateAttribute()
+    {
+        return $this->donations()->where('status', 'completed')->latest('donation_date')->first()?->donation_date;
+    }
 }
