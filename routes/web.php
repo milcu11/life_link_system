@@ -20,6 +20,11 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
+// Health check route for Railway
+Route::get('/health', function () {
+    return response('OK', 200);
+});
+
 // Public routes
 Route::middleware(['prevent-back'])->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
