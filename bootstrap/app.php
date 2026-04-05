@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Register the role middleware alias
         $middleware->alias([
             'role' => \App\Http\Middleware\RoleMiddleware::class,
+            'prevent-back' => \App\Http\Middleware\PreventBackButton::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

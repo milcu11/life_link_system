@@ -12,6 +12,10 @@ class HomeController extends Controller
 {
     public function index()
     {
+        if (Auth::check()) {
+            return redirect('/dashboard');
+        }
+
         $stats = [
             'total_donors' => Donor::count(),
             'lives_saved' => Donation::where('status', 'completed')->count(),

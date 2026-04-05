@@ -21,24 +21,26 @@ use Illuminate\Support\Facades\Route;
 */
 
 // Public routes
-Route::get('/', [HomeController::class, 'index'])->name('home');
-
-// Authentication routes
-Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [LoginController::class, 'login']);
-Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
-Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
-Route::post('/register', [RegisterController::class, 'register']);
-
-// Password Reset routes
-Route::prefix('password')->name('password.')->group(function () {
-    Route::get('/forgot', [PasswordResetController::class, 'showForgotPasswordForm'])->name('forgot');
-    Route::post('/send-code', [PasswordResetController::class, 'sendResetCode'])->name('send-code');
-    Route::get('/verify', [PasswordResetController::class, 'showVerifyForm'])->name('verify');
-    Route::post('/verify', [PasswordResetController::class, 'verifyCode'])->name('verify.check');
-    Route::get('/reset', [PasswordResetController::class, 'showResetForm'])->name('reset');
-    Route::post('/reset', [PasswordResetController::class, 'resetPassword'])->name('reset.confirm');
-    Route::post('/resend', [PasswordResetController::class, 'resendCode'])->name('resend');
+Route::middleware(['prevent-back'])->group(function () {
+    Route::get('/', [HomeController::class, 'index'])->name('home');
+    
+    // Authentication routes
+    Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [LoginController::class, 'login']);
+    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+    Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+    Route::post('/register', [RegisterController::class, 'register']);
+    
+    // Password Reset routes
+    Route::prefix('password')->name('password.')->group(function () {
+        Route::get('/forgot', [PasswordResetController::class, 'showForgotPasswordForm'])->name('forgot');
+        Route::post('/send-code', [PasswordResetController::class, 'sendResetCode'])->name('send-code');
+        Route::get('/verify', [PasswordResetController::class, 'showVerifyForm'])->name('verify');
+        Route::post('/verify', [PasswordResetController::class, 'verifyCode'])->name('verify.check');
+        Route::get('/reset', [PasswordResetController::class, 'showResetForm'])->name('reset');
+        Route::post('/reset', [PasswordResetController::class, 'resetPassword'])->name('reset.confirm');
+        Route::post('/resend', [PasswordResetController::class, 'resendCode'])->name('resend');
+    });
 });
 
 // Protected routes

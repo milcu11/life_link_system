@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Mail\PasswordResetCodeMail;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -19,6 +20,9 @@ class PasswordResetController extends Controller
      */
     public function showForgotPasswordForm()
     {
+        if (Auth::check()) {
+            return redirect('/dashboard');
+        }
         return view('auth.forgot-password');
     }
 
