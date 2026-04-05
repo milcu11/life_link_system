@@ -188,15 +188,19 @@ class AdminController extends Controller
             if ($appeal->donor) {
                 $appeal->donor->update(['is_verified' => true, 'verified_at' => now()]);
                 try {
-                    \Illuminate\Support\Facades\Mail::send(new \App\Mail\DonorVerificationStatus($appeal->donor, true));
-                } catch (\Exception $e) {}
+                    \Illuminate\Support\Facades\Mail::queue(new \App\Mail\DonorVerificationStatus($appeal->donor, true));
+                } catch (\Exception $e) {
+                    Log::error('Appeal approval email queue failed: ' . $e->getMessage(), ['appeal_id' => $appeal->id]);
+                }
             }
         } else {
             $appeal->status = 'rejected';
             if ($appeal->donor) {
                 try {
-                    \Illuminate\Support\Facades\Mail::send(new \App\Mail\DonorVerificationStatus($appeal->donor, false));
-                } catch (\Exception $e) {}
+                    \Illuminate\Support\Facades\Mail::queue(new \App\Mail\DonorVerificationStatus($appeal->donor, false));
+                } catch (\Exception $e) {
+                    Log::error('Appeal rejection email queue failed: ' . $e->getMessage(), ['appeal_id' => $appeal->id]);
+                }
             }
         }
 
@@ -222,12 +226,12 @@ class AdminController extends Controller
 
             if ($donor->user) {
                 try {
-                    Log::info('Sending approval email to: ' . $donor->user->email);
-                    Mail::send(new \App\Mail\DonorVerificationStatus($donor, true));
-                    Log::info('Approval email sent successfully to: ' . $donor->user->email);
+                    Log::info('Queueing approval email to: ' . $donor->user->email);
+                    Mail::queue(new \App\Mail\DonorVerificationStatus($donor, true));
+                    Log::info('Approval email queued successfully for: ' . $donor->user->email);
                 } catch (\Throwable $e) {
-                    Log::error('Approval email failed: ' . $e->getMessage(), ['donor_id' => $donor->id, 'email' => $donor->user->email]);
-                    return redirect()->back()->with('error', 'Donor approved, but email could not be sent.');
+                    Log::error('Approval email queue failed: ' . $e->getMessage(), ['donor_id' => $donor->id, 'email' => $donor->user->email]);
+                    return redirect()->back()->with('error', 'Donor approved, but email could not be queued.');
                 }
             }
 
@@ -250,12 +254,12 @@ class AdminController extends Controller
 
             if ($donor->user) {
                 try {
-                    Log::info('Sending rejection email to: ' . $donor->user->email);
-                    Mail::send(new \App\Mail\DonorVerificationStatus($donor, false));
-                    Log::info('Rejection email sent successfully to: ' . $donor->user->email);
+                    Log::info('Queueing rejection email to: ' . $donor->user->email);
+                    Mail::queue(new \App\Mail\DonorVerificationStatus($donor, false));
+                    Log::info('Rejection email queued successfully for: ' . $donor->user->email);
                 } catch (\Throwable $e) {
-                    Log::error('Rejection email failed: ' . $e->getMessage(), ['donor_id' => $donor->id, 'email' => $donor->user->email]);
-                    return redirect()->back()->with('error', 'Donor rejected, but email could not be sent.');
+                    Log::error('Rejection email queue failed: ' . $e->getMessage(), ['donor_id' => $donor->id, 'email' => $donor->user->email]);
+                    return redirect()->back()->with('error', 'Donor rejected, but email could not be queued.');
                 }
             }
 

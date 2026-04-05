@@ -151,9 +151,9 @@ class DonorController extends Controller
 
             // Send email to hospital
             try {
-                Mail::send(new DonorAcceptedMatch($match));
+                Mail::queue(new DonorAcceptedMatch($match));
             } catch (\Exception $e) {
-                \Log::error('Failed to send donor accepted email', [
+                \Log::error('Failed to queue donor accepted email', [
                     'match_id' => $match->id,
                     'error' => $e->getMessage(),
                 ]);
