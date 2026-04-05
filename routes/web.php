@@ -135,3 +135,103 @@ Route::middleware(['auth', 'prevent-back'])->group(function () {
     // Matching routes
     Route::post('/match/{request}', [MatchingController::class, 'findMatches'])->name('match.find');
 });
+
+// Email and Queue Testing Routes (for debugging)
+if (config('app.debug')) {
+    Route::get('/test-email', function () {
+        try {
+            \Illuminate\Support\Facades\Log::info('Starting email test');
+            
+            // Test 1: Check SMTP config
+            $config = config('mail');
+            \Illuminate\Support\Facades\Log::info('Mail config', [
+                'mailer' => $config['mailer'] ?? 'not set',
+                'host' => config('mail.mailers.smtp.host') ?? 'not set',
+                'port' => config('mail.mailers.smtp.port') ?? 'not set',
+                'encryption' => config('mail.mailers.smtp.encryption') ?? 'not set',
+            ]);
+            
+            // Test 2: Try sending email synchronously
+            \Illuminate\Support\Facades\Log::info('Attempting to send test email synchronously');
+            \Illuminate\Support\Facades\Mail::raw('This is a test email from LifeLink on ' . now(), function ($message) {
+                $message->to('mickeyalaz6@gmail.com')
+                        ->subject('LifeLink Test Email - Sync Send');
+            });
+            
+            return response()->json([
+                'status' => 'Email sent successfully (sync)',
+                'timestamp' => now(),
+                'config' => [
+                    'mailer' => config('mail.mailer'),
+                    'host' => config('mail.mailers.smtp.host'),
+                    'port' => config('mail.mailers.smtp.port'),
+                    'encryption' => config('mail.mailers.smtp.encryption'),
+                ]
+            ]);
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Email test failed: ' . $e->getMessage(), ['exception' => $e]);
+            return response()->json([
+                'status' => 'Email failed',
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ], 500);
+        }
+    });
+
+    Route::get('/check-queue', function () {
+        try {
+            $jobs = \Illuminate\Support\Facades\DB::table('jobs')->count();
+            $failed = \Illuminate\Support\Facades\DB::table('failed_jobs')->count();
+            
+            $recentJobs = \Illuminate\Support\Facades\DB::table('jobs')
+                ->select('id', 'queue', 'payload', 'attempts', 'created_at')
+                ->orderBy('created_at', 'desc')
+                ->limit(5)
+                ->get();
+            
+            return response()->json([
+                'total_jobs' => $jobs,
+                'failed_jobs' => $failed,
+                'recent_jobs' => $recentJobs,
+                'queue_connection' => config('queue.default'),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    });
+
+    Route::get('/test-queue-email', function () {
+        try {
+            \Illuminate\Support\Facades\Log::info('Queueing test email');
+            
+            \Illuminate\Support\Facades\Mail::queue(new class extends \Illuminate\Mail\Mailable {
+                use \Illuminate\Queue\SerializesModels;
+                
+                public function build()
+                {
+                    return $this->to('mickeyalaz6@gmail.com')
+                               ->subject('LifeLink Test Email - Queue Send')
+                               ->view('emails.test')
+                               ->with(['message' => 'This is a queued test email sent at ' . now()]);
+                }
+            });
+            
+            $jobCount = \Illuminate\Support\Facades\DB::table('jobs')->count();
+            \Illuminate\Support\Facades\Log::info('Test email queued, total jobs: ' . $jobCount);
+            
+            return response()->json([
+                'status' => 'Email queued successfully',
+                'total_jobs_in_queue' => $jobCount,
+                'queue_connection' => config('queue.default'),
+            ]);
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Queue test failed: ' . $e->getMessage());
+            return response()->json([
+                'status' => 'Queue failed',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    });
+}
