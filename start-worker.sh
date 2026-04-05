@@ -1,0 +1,3 @@
+#!/bin/bash
+
+exec php artisan queue:work database --sleep=3 --tries=3 --timeout=90
