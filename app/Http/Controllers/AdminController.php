@@ -224,8 +224,8 @@ class AdminController extends Controller
             if ($donor->user) {
                 try {
                     Log::info('Sending approval email to: ' . $donor->user->email);
-                    Mail::mailer('smtp')->send(new \App\Mail\DonorVerificationStatus($donor, true));
-                    Log::info('Approval email sent successfully to: ' . $donor->user->email);
+                    Mail::queue(new \App\Mail\DonorVerificationStatus($donor, true));
+                    Log::info('Approval email queued successfully for: ' . $donor->user->email);
                 } catch (\Throwable $e) {
                     Log::warning('Email sending failed (continuing): ' . $e->getMessage());
                     // Don't fail the approval just because email failed
@@ -253,8 +253,8 @@ class AdminController extends Controller
             if ($donor->user) {
                 try {
                     Log::info('Sending rejection email to: ' . $donor->user->email);
-                    Mail::mailer('smtp')->send(new \App\Mail\DonorVerificationStatus($donor, false));
-                    Log::info('Rejection email sent successfully to: ' . $donor->user->email);
+                    Mail::queue(new \App\Mail\DonorVerificationStatus($donor, false));
+                    Log::info('Rejection email queued successfully to: ' . $donor->user->email);
                 } catch (\Throwable $e) {
                     Log::warning('Email sending failed (continuing): ' . $e->getMessage());
                     // Don't fail the rejection just because email failed
