@@ -220,21 +220,20 @@ class AdminController extends Controller
                 'verified_at' => now(),
             ]);
 
-            // Queue email notification asynchronously
             if ($donor->user) {
                 try {
                     Log::info('Sending approval email to: ' . $donor->user->email);
-                    Mail::queue(new \App\Mail\DonorVerificationStatus($donor, true));
-                    Log::info('Approval email queued successfully for: ' . $donor->user->email);
+                    Mail::send(new \App\Mail\DonorVerificationStatus($donor, true));
+                    Log::info('Approval email sent successfully to: ' . $donor->user->email);
                 } catch (\Throwable $e) {
-                    Log::warning('Email sending failed (continuing): ' . $e->getMessage());
-                    // Don't fail the approval just because email failed
+                    Log::error('Approval email failed: ' . $e->getMessage(), ['donor_id' => $donor->id, 'email' => $donor->user->email]);
+                    return redirect()->back()->with('error', 'Donor approved, but email could not be sent.');
                 }
             }
 
             return redirect()->back()->with('success', 'Donor approved successfully.');
         } catch (\Exception $e) {
-            \Illuminate\Support\Facades\Log::error('Error approving donor: ' . $e->getMessage());
+            Log::error('Error approving donor: ' . $e->getMessage(), ['donor_id' => $donor->id]);
             return redirect()->back()->with('error', 'Error approving donor: ' . $e->getMessage());
         }
     }
@@ -249,21 +248,20 @@ class AdminController extends Controller
                 'rejection_reason' => $request->input('reason'),
             ]);
 
-            // Queue email notification asynchronously
             if ($donor->user) {
                 try {
                     Log::info('Sending rejection email to: ' . $donor->user->email);
-                    Mail::queue(new \App\Mail\DonorVerificationStatus($donor, false));
-                    Log::info('Rejection email queued successfully to: ' . $donor->user->email);
+                    Mail::send(new \App\Mail\DonorVerificationStatus($donor, false));
+                    Log::info('Rejection email sent successfully to: ' . $donor->user->email);
                 } catch (\Throwable $e) {
-                    Log::warning('Email sending failed (continuing): ' . $e->getMessage());
-                    // Don't fail the rejection just because email failed
+                    Log::error('Rejection email failed: ' . $e->getMessage(), ['donor_id' => $donor->id, 'email' => $donor->user->email]);
+                    return redirect()->back()->with('error', 'Donor rejected, but email could not be sent.');
                 }
             }
 
             return redirect()->back()->with('success', 'Donor rejected successfully.');
         } catch (\Exception $e) {
-            \Illuminate\Support\Facades\Log::error('Error rejecting donor: ' . $e->getMessage());
+            Log::error('Error rejecting donor: ' . $e->getMessage(), ['donor_id' => $donor->id]);
             return redirect()->back()->with('error', 'Error rejecting donor: ' . $e->getMessage());
         }
     }
