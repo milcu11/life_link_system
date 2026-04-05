@@ -61,7 +61,7 @@ class DashboardController extends Controller
             'total_donations' => $donor->donations()->where('status', 'completed')->count(),
             'pending_matches' => $donor->matchings()->where('status', 'pending')->count(),
             'can_donate' => $donor->canDonate(),
-            'last_donation' => $donor->last_donation_date?->format('M d, Y') ?? 'Never',
+            'last_donation' => $donor->donations()->where('status', 'completed')->latest('donation_date')->first()?->donation_date?->format('M d, Y') ?? 'Never',
         ];
         
         // only include donations with an existing blood request to prevent null-relations
