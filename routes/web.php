@@ -44,7 +44,7 @@ Route::middleware(['prevent-back'])->group(function () {
 });
 
 // Protected routes
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'prevent-back'])->group(function () {
     
     // Dashboard routes
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
