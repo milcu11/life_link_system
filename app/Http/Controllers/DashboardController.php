@@ -14,12 +14,28 @@ class DashboardController extends Controller
     {
         $user = $request->user();
         
+        \Log::info('Dashboard access', [
+            'user_id' => $user->id,
+            'user_role' => $user->role,
+            'is_admin' => $user->isAdmin(),
+            'is_hospital' => $user->isHospital(),
+            'is_donor' => $user->isDonor(),
+            'has_donor_relation' => $user->donor ? true : false,
+        ]);
+        
         if ($user->isAdmin()) {
+            \Log::info('Redirecting admin to admin dashboard');
             return redirect()->route('admin.dashboard');
         } elseif ($user->isHospital()) {
+            \Log::info('Showing hospital dashboard');
             return $this->hospitalDashboard($user);
-        } else {
+        } elseif ($user->isDonor() || $user->donor) {
+            \Log::info('Showing donor dashboard');
             return $this->donorDashboard($user);
+        } else {
+            \Log::info('User has no valid role, redirecting to login');
+            Auth::logout();
+            return redirect('/login')->with('error', 'Your account is not properly configured. Please contact support.');
         }
     }
     
