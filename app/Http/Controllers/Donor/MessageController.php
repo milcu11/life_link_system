@@ -82,7 +82,7 @@ class MessageController extends Controller
             ->update(['read_at' => now()]);
 
         // Get related requests for context
-        $relatedRequests = $donor->donor->matchings()
+        $requests = $donor->donor->matchings()
             ->whereHas('request', function($q) use ($hospital) {
                 $q->where('hospital_id', $hospital->id);
             })
@@ -90,7 +90,7 @@ class MessageController extends Controller
             ->get()
             ->pluck('request');
 
-        return view('donor.messages.show', compact('hospital', 'messages', 'relatedRequests'));
+        return view('donor.messages.show', compact('hospital', 'messages', 'requests'));
     }
 
     /**
