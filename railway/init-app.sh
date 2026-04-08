@@ -14,11 +14,19 @@ php artisan tinker --execute="try { DB::connection()->getPdo(); echo 'Database c
 
 # Run database migrations
 echo "Running database migrations..."
-php artisan migrate --force
+if php artisan migrate --force; then
+    echo "Migrations completed successfully"
+else
+    echo "Migration failed, but continuing deployment..."
+fi
 
 # Verify migrations ran
 echo "Checking if blood_inventory table exists..."
 php artisan tinker --execute="if (Schema::hasTable('blood_inventory')) { echo 'blood_inventory table exists'; } else { echo 'blood_inventory table missing!'; exit(1); }"
+
+# Check if location fields were added to users table
+echo "Checking if location fields exist in users table..."
+php artisan tinker --execute="if (Schema::hasColumn('users', 'location')) { echo 'Location fields exist in users table'; } else { echo 'Location fields missing from users table!'; }"
 
 # Clear and cache config
 echo "Clearing and caching configuration..."
