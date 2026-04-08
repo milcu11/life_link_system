@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register - Blood Donation System</title>
+    <title>Register as Donor - Blood Donation System</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="h-screen overflow-hidden bg-gray-100">
@@ -18,7 +18,7 @@
                 <div class="flex justify-center">
                     <img src="{{ asset('images/lifelink-logo.svg') }}" alt="LifeLink Logo" class="lifelink-logo-form" />
                 </div>
-                <h2 class="mt-4 text-center text-2xl sm:text-3xl font-bold text-gray-900">Create your account</h2>
+                <h2 class="mt-4 text-center text-2xl sm:text-3xl font-bold text-gray-900">Register as a Blood Donor</h2>
 
                 <form class="mt-6 space-y-4" method="POST" action="{{ route('register') }}">
                 @csrf
@@ -48,14 +48,7 @@
                                placeholder="yourname@example.com" value="{{ old('email') }}">
                     </div>
 
-                    <div>
-                        <label for="role" class="block text-sm font-medium text-gray-700">Register As</label>
-                        <select id="role" name="role" required 
-                                class="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm">
-                            <option value="donor" {{ old('role') == 'donor' ? 'selected' : '' }}>Blood Donor</option>
-                            <option value="hospital" {{ old('role') == 'hospital' ? 'selected' : '' }}>Hospital / Medical Facility</option>
-                        </select>
-                    </div>
+                    <input type="hidden" name="role" value="donor">
 
                     <div class="relative">
                         <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
