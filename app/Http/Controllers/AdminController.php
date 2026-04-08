@@ -307,9 +307,6 @@ class AdminController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
             'phone' => 'nullable|string|max:20',
-            'location' => 'nullable|string|max:255',
-            'latitude' => 'nullable|numeric',
-            'longitude' => 'nullable|numeric',
         ]);
 
         $user = User::create([
@@ -318,9 +315,6 @@ class AdminController extends Controller
             'password' => bcrypt($request->password),
             'role' => 'hospital',
             'phone' => $request->phone,
-            'location' => $request->location,
-            'latitude' => $request->latitude,
-            'longitude' => $request->longitude,
             'is_active' => true,
         ]);
 
@@ -368,14 +362,11 @@ class AdminController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $hospital->id,
             'phone' => 'nullable|string|max:20',
-            'location' => 'nullable|string|max:255',
-            'latitude' => 'nullable|numeric',
-            'longitude' => 'nullable|numeric',
             'is_active' => 'boolean',
         ]);
 
         $hospital->update($request->only([
-            'name', 'email', 'phone', 'location', 'latitude', 'longitude', 'is_active'
+            'name', 'email', 'phone', 'is_active'
         ]));
 
         return redirect()->route('admin.hospitals.show', $hospital)->with('success', 'Hospital updated successfully.');

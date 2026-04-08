@@ -83,6 +83,10 @@ class DashboardController extends Controller
     
     private function hospitalDashboard($user)
     {
+        if (!$user->location || !$user->latitude || !$user->longitude) {
+            return redirect()->route('hospital.profile.edit')->with('info', 'Please complete your hospital profile before using the dashboard.');
+        }
+
         $stats = [
             'active_requests' => BloodRequest::where('hospital_id', $user->id)
                 ->where('status', 'pending')

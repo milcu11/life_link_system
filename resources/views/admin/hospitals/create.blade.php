@@ -56,37 +56,6 @@
                         </div>
                     </div>
 
-                    <!-- Location Information -->
-                    <div>
-                        <h3 class="text-lg font-medium text-gray-900 mb-4">Location Information</h3>
-                        <div class="grid grid-cols-1 gap-6">
-                            <div>
-                                <label for="location" class="block text-sm font-medium text-gray-700">Address</label>
-                                <input type="text" name="location" id="location" value="{{ old('location') }}"
-                                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                                       placeholder="Hospital address">
-                            </div>
-
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label for="latitude" class="block text-sm font-medium text-gray-700">Latitude</label>
-                                    <input type="number" step="any" name="latitude" id="latitude" value="{{ old('latitude') }}"
-                                           class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm">
-                                </div>
-                                <div>
-                                    <label for="longitude" class="block text-sm font-medium text-gray-700">Longitude</label>
-                                    <input type="number" step="any" name="longitude" id="longitude" value="{{ old('longitude') }}"
-                                           class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm">
-                                </div>
-                            </div>
-                            <div class="mt-4">
-                                <button type="button" onclick="getLocation()" class="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition">
-                                    <i class="fas fa-map-marker-alt mr-2"></i>Use My Current Location
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
                     <!-- Account Setup -->
                     <div>
                         <h3 class="text-lg font-medium text-gray-900 mb-4">Account Setup</h3>
@@ -119,27 +88,4 @@
     </div>
 </div>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Auto-fill coordinates based on address (optional enhancement)
-    const locationInput = document.getElementById('location');
-    const latitudeInput = document.getElementById('latitude');
-    const longitudeInput = document.getElementById('longitude');
-
-    // You could add geocoding functionality here if desired
-});
-
-function getLocation() {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function(position) {
-            document.getElementById('latitude').value = position.coords.latitude;
-            document.getElementById('longitude').value = position.coords.longitude;
-        }, function(error) {
-            alert('Unable to get your location. Please enter latitude and longitude manually.');
-        });
-    } else {
-        alert('Geolocation is not supported by your browser.');
-    }
-}
-</script>
 @endsection

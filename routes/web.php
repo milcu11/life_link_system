@@ -98,6 +98,10 @@ Route::middleware(['auth', 'prevent-back'])->group(function () {
         Route::get('reports', [\App\Http\Controllers\Hospital\ReportController::class, 'index'])->name('reports.index');
         Route::get('reports/export', [\App\Http\Controllers\Hospital\ReportController::class, 'export'])->name('reports.export');
 
+        // Profile routes
+        Route::get('profile', [\App\Http\Controllers\Hospital\ProfileController::class, 'edit'])->name('profile.edit');
+        Route::post('profile', [\App\Http\Controllers\Hospital\ProfileController::class, 'update'])->name('profile.update');
+
         // Scheduling routes
         Route::resource('drives', \App\Http\Controllers\Hospital\BloodDriveController::class);
         Route::post('drives/{drive}/cancel', [\App\Http\Controllers\Hospital\BloodDriveController::class, 'cancel'])->name('drives.cancel');
