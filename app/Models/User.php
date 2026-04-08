@@ -46,6 +46,11 @@ class User extends Authenticatable
         return $this->hasMany(BloodRequest::class, 'hospital_id');
     }
 
+    public function bloodInventory(): HasMany
+    {
+        return $this->hasMany(BloodInventory::class, 'hospital_id');
+    }
+
     public function notifications(): HasMany
     {
         return $this->hasMany(Notification::class);
