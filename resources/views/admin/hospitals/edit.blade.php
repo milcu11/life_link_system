@@ -80,6 +80,11 @@
                                            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm">
                                 </div>
                             </div>
+                            <div class="mt-4">
+                                <button type="button" onclick="getLocation()" class="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition">
+                                    <i class="fas fa-map-marker-alt mr-2"></i>Use My Current Location
+                                </button>
+                            </div>
                         </div>
                     </div>
 
@@ -129,4 +134,19 @@
         </div>
     </div>
 </div>
+
+<script>
+    function getLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                document.getElementById('latitude').value = position.coords.latitude;
+                document.getElementById('longitude').value = position.coords.longitude;
+            }, function(error) {
+                alert('Unable to get your location. Please enter latitude and longitude manually.');
+            });
+        } else {
+            alert('Geolocation is not supported by your browser.');
+        }
+    }
+</script>
 @endsection
