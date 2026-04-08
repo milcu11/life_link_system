@@ -33,6 +33,9 @@
                             <a href="{{ route('admin.donors') }}" class="flex items-center gap-2 text-gray-600 hover:text-red-600 font-medium transition {{ request()->routeIs('admin.donors*') || request()->is('admin/donors*') ? 'text-red-600' : '' }}">
                                 <i class="fas fa-users"></i> Donors
                             </a>
+                            <a href="{{ route('admin.hospitals') }}" class="flex items-center gap-2 text-gray-600 hover:text-red-600 font-medium transition {{ request()->routeIs('admin.hospitals*') || request()->is('admin/hospitals*') ? 'text-red-600' : '' }}">
+                                <i class="fas fa-hospital"></i> Hospitals
+                            </a>
                             <a href="{{ route('admin.requests') }}" class="flex items-center gap-2 text-gray-600 hover:text-red-600 font-medium transition {{ request()->routeIs('admin.requests*') || request()->is('admin/requests*') ? 'text-red-600' : '' }}">
                                 <i class="fas fa-hand-holding-medical"></i> Requests
                             </a>

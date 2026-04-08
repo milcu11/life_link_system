@@ -120,6 +120,13 @@ Route::middleware(['auth', 'prevent-back'])->group(function () {
         Route::get('/donations', [AdminController::class, 'donations'])->name('donations');
         Route::get('/users', [AdminController::class, 'users'])->name('users');
         Route::post('/users/{user}/toggle', [AdminController::class, 'toggleUserStatus'])->name('users.toggle');
+        Route::get('/hospitals', [AdminController::class, 'hospitals'])->name('hospitals');
+        Route::get('/hospitals/create', [AdminController::class, 'createHospital'])->name('hospitals.create');
+        Route::post('/hospitals', [AdminController::class, 'storeHospital'])->name('hospitals.store');
+        Route::get('/hospitals/{hospital}', [AdminController::class, 'showHospital'])->name('hospitals.show');
+        Route::get('/hospitals/{hospital}/edit', [AdminController::class, 'editHospital'])->name('hospitals.edit');
+        Route::put('/hospitals/{hospital}', [AdminController::class, 'updateHospital'])->name('hospitals.update');
+        Route::delete('/hospitals/{hospital}', [AdminController::class, 'deleteHospital'])->name('hospitals.delete');
         Route::get('/reports', [ReportController::class, 'index'])->name('reports');
         Route::get('/reports/generate', [ReportController::class, 'generate'])->name('reports.generate');
         Route::get('/map', [AdminController::class, 'map'])->name('map');

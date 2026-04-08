@@ -283,4 +283,120 @@ class AdminController extends Controller
 
         return response()->download($path);
     }
+
+    // Hospital management methods
+    public function hospitals()
+    {
+        $hospitals = User::where('role', 'hospital')
+            ->withCount(['bloodRequests', 'bloodInventory'])
+            ->latest()
+            ->paginate(20);
+
+        return view('admin.hospitals.index', compact('hospitals'));
+    }
+
+    public function createHospital()
+    {
+        return view('admin.hospitals.create');
+    }
+
+    public function storeHospital(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8|confirmed',
+            'phone' => 'nullable|string|max:20',
+            'location' => 'nullable|string|max:255',
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
+        ]);
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => bcrypt($request->password),
+            'role' => 'hospital',
+            'phone' => $request->phone,
+            'location' => $request->location,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
+            'is_active' => true,
+        ]);
+
+        return redirect()->route('admin.hospitals.show', $user)->with('success', 'Hospital created successfully.');
+    }
+
+    public function showHospital(User $hospital)
+    {
+        if ($hospital->role !== 'hospital') {
+            abort(404);
+        }
+
+        $hospital->load(['bloodRequests' => function($query) {
+            $query->latest()->take(5);
+        }, 'bloodInventory' => function($query) {
+            $query->latest()->take(10);
+        }]);
+
+        $stats = [
+            'total_requests' => $hospital->bloodRequests()->count(),
+            'pending_requests' => $hospital->bloodRequests()->where('status', 'pending')->count(),
+            'fulfilled_requests' => $hospital->bloodRequests()->where('status', 'fulfilled')->count(),
+            'total_inventory' => $hospital->bloodInventory()->sum('quantity'),
+        ];
+
+        return view('admin.hospitals.show', compact('hospital', 'stats'));
+    }
+
+    public function editHospital(User $hospital)
+    {
+        if ($hospital->role !== 'hospital') {
+            abort(404);
+        }
+
+        return view('admin.hospitals.edit', compact('hospital'));
+    }
+
+    public function updateHospital(Request $request, User $hospital)
+    {
+        if ($hospital->role !== 'hospital') {
+            abort(404);
+        }
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $hospital->id,
+            'phone' => 'nullable|string|max:20',
+            'location' => 'nullable|string|max:255',
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
+            'is_active' => 'boolean',
+        ]);
+
+        $hospital->update($request->only([
+            'name', 'email', 'phone', 'location', 'latitude', 'longitude', 'is_active'
+        ]));
+
+        return redirect()->route('admin.hospitals.show', $hospital)->with('success', 'Hospital updated successfully.');
+    }
+
+    public function deleteHospital(User $hospital)
+    {
+        if ($hospital->role !== 'hospital') {
+            abort(404);
+        }
+
+        // Check if hospital has active requests or inventory
+        $hasRequests = $hospital->bloodRequests()->exists();
+        $hasInventory = $hospital->bloodInventory()->exists();
+
+        if ($hasRequests || $hasInventory) {
+            return redirect()->back()->with('error', 'Cannot delete hospital with existing requests or inventory. Please archive instead.');
+        }
+
+        $hospital->delete();
+
+        return redirect()->route('admin.hospitals')->with('success', 'Hospital deleted successfully.');
+    }
 }
