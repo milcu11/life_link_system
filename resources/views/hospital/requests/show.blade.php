@@ -105,7 +105,10 @@
 
             <div class="bg-white rounded-lg shadow p-4 md:p-6 mb-4 md:mb-6">
                 <h3 class="text-base md:text-lg font-semibold mb-3 md:mb-4">Accepted Donors</h3>
-                @php $acceptedMatches = $request->matchings->where('status', 'accepted'); @endphp
+                @php
+                    $acceptedMatches = $request->matchings->where('status', 'accepted')
+                        ->filter(fn($match) => $match->donor !== null);
+                @endphp
                 @if($acceptedMatches->count())
                     <div class="space-y-3 md:space-y-4">
                         @foreach($acceptedMatches as $match)
