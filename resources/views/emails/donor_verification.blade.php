@@ -11,6 +11,10 @@
 
 <p>Thank you for completing your donor registration. After reviewing your submitted information and documents, we were unable to approve your registration at this time.</p>
 
+@if(!empty($rejectionReason))
+<p><strong>Reason:</strong> {{ $rejectionReason }}</p>
+@endif
+
 <p>If you believe this is an error or you'd like to provide more documentation, please contact support or update your profile and re-upload valid verification documents.</p>
 
 <p>— The LifeLink Team</p>
