@@ -27,6 +27,7 @@ class Donor extends Model
         'verification_document_path',
         'is_verified',
         'verified_at',
+        'rejection_reason',
     ];
 
     protected $casts = [
