@@ -49,8 +49,9 @@
         <div class="max-w-2xl mx-auto">
             <!-- Back Arrow Row - Simple, Non-intrusive -->
             <div class="back-row">
-                <a href="{{ route('dashboard') }}" class="back-button text-red-600 hover:text-red-500 inline-flex cursor-pointer transition duration-200 hover:scale-110">
-                </a>
+                <button onclick="window.history.back()" class="back-button text-red-600 hover:text-red-500 inline-flex cursor-pointer transition duration-200 hover:scale-110">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
             </div>
 
             <!-- Form Card - Unchanged Layout and Sizing -->
@@ -282,6 +283,10 @@
     </div>
 
     <script>
+        function goBack() {
+            window.history.back();
+        }
+
         // Dropdown toggle functionality
         const profileDropdown = document.getElementById('profileDropdown');
         const profileMenu = document.getElementById('profileMenu');

@@ -12,6 +12,11 @@
 
     <div class="min-h-screen py-8">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="mb-4">
+                <button onclick="window.history.back()" class="back-button text-red-600 hover:text-red-500 inline-flex items-center cursor-pointer transition duration-200 hover:scale-110">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+            </div>
             <div class="mb-8 flex justify-between items-center">
                 <div>
                     <h1 class="text-3xl font-bold text-gray-900">Blood Inventory</h1>
@@ -129,3 +134,8 @@
     </script>
 </body>
 </html>
+<script>
+    function goBack() {
+        window.history.back();
+    }
+</script>

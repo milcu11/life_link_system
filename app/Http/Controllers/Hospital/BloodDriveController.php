@@ -10,6 +10,11 @@ use Illuminate\Http\Request;
 
 class BloodDriveController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('hospital.profile.complete');
+    }
+
     public function index(Request $request)
     {
         $hospital = $request->user();

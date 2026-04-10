@@ -56,6 +56,11 @@
 
     <div class="min-h-screen py-6 md:py-8">
         <div class="max-w-3xl mx-auto px-3 md:px-4 lg:px-8">
+            <div class="mb-4">
+                <button onclick="window.history.back()" class="back-button text-red-600 hover:text-red-500 inline-flex items-center cursor-pointer transition duration-200 hover:scale-110">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+            </div>
             <!-- Page Header -->
             <div class="mb-6 md:mb-8">
                 <h1 class="text-2xl md:text-3xl font-bold text-gray-900">Create Blood Request</h1>
@@ -301,8 +306,10 @@
             menuDropdownContent.classList.add('hidden');
         }
     });
+
+    function goBack() {
+        window.history.back();
+    }
     </script>
-</body>
-</html>
 
 

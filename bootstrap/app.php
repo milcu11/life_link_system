@@ -15,6 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role' => \App\Http\Middleware\RoleMiddleware::class,
             'prevent-back' => \App\Http\Middleware\PreventBackButton::class,
+            'hospital.profile.complete' => \App\Http\Middleware\HospitalProfileComplete::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

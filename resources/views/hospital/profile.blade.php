@@ -63,9 +63,9 @@
                     </div>
                 </div>
 
-                <div class="mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-end">
-                    <a href="{{ route('dashboard') }}" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">Cancel</a>
-                    <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">Save Profile</button>
+                <div class="mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
+                    <a href="{{ route('dashboard') }}" class="px-6 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition cursor-pointer font-medium inline-flex items-center justify-center">Cancel</a>
+                    <button type="submit" class="px-6 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition cursor-pointer font-medium">Save Profile</button>
                 </div>
             </form>
         </div>

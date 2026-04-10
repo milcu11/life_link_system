@@ -55,6 +55,11 @@
     </nav>
     <div class="min-h-screen py-6 md:py-8">
         <div class="max-w-4xl mx-auto px-3 md:px-4 lg:px-8">
+            <div class="mb-4">
+                <button onclick="window.history.back()" class="back-button text-red-600 hover:text-red-500 inline-flex items-center cursor-pointer transition duration-200 hover:scale-110">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+            </div>
             <div class="mb-4 md:mb-6">
                 <h1 class="text-xl md:text-2xl font-bold text-gray-900">Request Details</h1>
                 <p class="text-sm md:text-base text-gray-600 mt-1">Overview and matched donors</p>
@@ -230,6 +235,10 @@
                 menuDropdownContent.classList.add('hidden');
             }
         });
+
+        function goBack() {
+            window.history.back();
+        }
     </script>
 </body>
 </html>

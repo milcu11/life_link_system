@@ -8,6 +8,11 @@ use Illuminate\Support\Facades\Auth;
 
 class BloodRequestController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('hospital.profile.complete')->only(['index', 'create', 'store']);
+    }
+
     public function index()
     {
         $requests = BloodRequest::where('hospital_id', Auth::id())

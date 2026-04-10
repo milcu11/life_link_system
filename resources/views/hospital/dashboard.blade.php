@@ -32,19 +32,29 @@
                             <i class="fas fa-chevron-down text-xs"></i>
                         </button>
                         <div id="menuDropdownContent" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50 hidden">
-                            <a href="{{ route('hospital.requests.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900">
+                            @php
+                                $profileComplete = auth()->user()->location && auth()->user()->latitude && auth()->user()->longitude;
+                            @endphp
+                            
+                            @if(!$profileComplete)
+                                <div class="px-4 py-2 text-xs text-amber-700 bg-amber-50 border-b border-amber-200">
+                                    <i class="fas fa-exclamation-triangle mr-1"></i>Complete your profile first
+                                </div>
+                            @endif
+                            
+                            <a href="{{ route('hospital.requests.index') }}" class="block px-4 py-2 text-sm {{ !$profileComplete ? 'text-gray-400 cursor-not-allowed' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900 cursor-pointer' }}" {{ !$profileComplete ? 'onclick="event.preventDefault();"' : '' }}>
                                 <i class="fas fa-list mr-2"></i>My Requests
                             </a>
-                            <a href="{{ route('hospital.requests.create') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900">
+                            <a href="{{ route('hospital.requests.create') }}" class="block px-4 py-2 text-sm {{ !$profileComplete ? 'text-gray-400 cursor-not-allowed' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900 cursor-pointer' }}" {{ !$profileComplete ? 'onclick="event.preventDefault();"' : '' }}>
                                 <i class="fas fa-plus-circle mr-2"></i>New Request
                             </a>
-                            <a href="{{ route('hospital.inventory.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900">
+                            <a href="{{ route('hospital.inventory.index') }}" class="block px-4 py-2 text-sm {{ !$profileComplete ? 'text-gray-400 cursor-not-allowed' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900 cursor-pointer' }}" {{ !$profileComplete ? 'onclick="event.preventDefault();"' : '' }}>
                                 <i class="fas fa-boxes mr-2"></i>Blood Inventory
                             </a>
-                            <a href="{{ route('hospital.drives.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900">
+                            <a href="{{ route('hospital.drives.index') }}" class="block px-4 py-2 text-sm {{ !$profileComplete ? 'text-gray-400 cursor-not-allowed' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900 cursor-pointer' }}" {{ !$profileComplete ? 'onclick="event.preventDefault();"' : '' }}>
                                 <i class="fas fa-calendar-alt mr-2"></i>Blood Drives
                             </a>
-                            <a href="{{ route('hospital.reports.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900">
+                            <a href="{{ route('hospital.reports.index') }}" class="block px-4 py-2 text-sm {{ !$profileComplete ? 'text-gray-400 cursor-not-allowed' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900 cursor-pointer' }}" {{ !$profileComplete ? 'onclick="event.preventDefault();"' : '' }}>
                                 <i class="fas fa-chart-bar mr-2"></i>Analytics & Reports
                             </a>
                             <hr class="border-gray-200">

@@ -8,6 +8,11 @@ use Illuminate\Http\Request;
 
 class InventoryController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('hospital.profile.complete');
+    }
+
     /**
      * Display a listing of the resource.
      */

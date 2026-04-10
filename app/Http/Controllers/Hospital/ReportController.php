@@ -11,6 +11,11 @@ use Illuminate\Support\Facades\DB;
 
 class ReportController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('hospital.profile.complete');
+    }
+
     public function index(Request $request)
     {
         $hospital = $request->user();

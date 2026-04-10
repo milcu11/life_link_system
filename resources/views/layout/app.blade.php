@@ -155,6 +155,22 @@
             </div>
         @endif
 
+        @if(auth()->check() && auth()->user()->isAdmin() && request()->is('admin*'))
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+                <button type="button" onclick="goBack()" class="inline-flex items-center gap-2 rounded-md border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 hover:text-red-700 transition cursor-pointer">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+            </div>
+        @endif
+
+        @if(auth()->check() && auth()->user()->isDonor() && !request()->is('dashboard'))
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+                <button type="button" onclick="goBack()" class="inline-flex items-center gap-2 rounded-md border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 hover:text-red-700 transition cursor-pointer">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+            </div>
+        @endif
+
         @yield('content')
     </main>
 
@@ -162,6 +178,14 @@
         function toggleUserMenu() {
             const dropdown = document.getElementById('userDropdown');
             dropdown.classList.toggle('hidden');
+        }
+
+        function goBack() {
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = '{{ route('admin.dashboard') }}';
+            }
         }
 
         // Close dropdown when clicking outside
