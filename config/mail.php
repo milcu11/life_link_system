@@ -46,7 +46,8 @@ return [
             'encryption' => env('MAIL_ENCRYPTION') ?: (in_array(env('MAIL_SCHEME'), ['tls', 'ssl']) ? env('MAIL_SCHEME') : null),
             'username' => env('MAIL_USERNAME'),
             'password' => env('MAIL_PASSWORD'),
-            'timeout' => null,
+            'timeout' => env('MAIL_TIMEOUT', 10),
+            'auth_mode' => env('MAIL_AUTH_MODE', 'login'),
             'local_domain' => env('MAIL_EHLO_DOMAIN', parse_url((string) env('APP_URL', 'http://localhost'), PHP_URL_HOST)),
         ],
 
