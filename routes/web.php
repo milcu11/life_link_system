@@ -250,4 +250,21 @@ if (config('app.debug')) {
             ], 500);
         }
     });
+
+    Route::get('/debug-mail', function () {
+        return response()->json([
+            'app_env' => config('app.env'),
+            'app_debug' => config('app.debug'),
+            'queue_connection' => config('queue.default'),
+            'mail_default' => config('mail.default') ?? config('mail.mailer'),
+            'mail_host' => config('mail.mailers.smtp.host'),
+            'mail_port' => config('mail.mailers.smtp.port'),
+            'mail_encryption' => config('mail.mailers.smtp.encryption'),
+            'mail_username' => config('mail.mailers.smtp.username'),
+            'mail_from_address' => config('mail.from.address'),
+            'mail_from_name' => config('mail.from.name'),
+            'smtp_transport' => config('mail.mailers.smtp.transport'),
+            'smtp_scheme' => config('mail.mailers.smtp.scheme'),
+        ]);
+    });
 }
