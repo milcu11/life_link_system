@@ -5,22 +5,3 @@ builder = "RAILPACK"
 preDeployCommand = ["chmod +x ./railway/init-app.sh && ./railway/init-app.sh"]
 healthcheckPath = "/"
 healthcheckTimeout = 300
-
-[processes]
-web = "php-fpm"
-worker = "php artisan queue:work --sleep=3 --tries=3 --max-jobs=1000 --timeout=90"
-
-[[services]]
-name = "life_link_system"
-
-[[services.processes]]
-name = "web"
-startCommand = "php-fpm"
-restartPolicy = "always"
-numReplicas = 1
-
-[[services.processes]]
-name = "worker"
-startCommand = "php artisan queue:work --sleep=3 --tries=3 --max-jobs=1000 --timeout=90 --queue=default"
-restartPolicy = "always"
-numReplicas = 1
