@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Jobs\SendMatchNotification;
 use App\Models\BloodRequest;
 use App\Models\Donor;
 use App\Models\Matching;
 use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class MatchingController extends Controller
 {
@@ -66,10 +66,15 @@ class MatchingController extends Controller
                 'request_id' => $request->id,
             ]);
 
-            // Dispatch email notification job (runs asynchronously via queue)
-            SendMatchNotification::dispatch($match)
-                ->onQueue('default')
-                ->delay(now()); // Send immediately
+            try {
+                Mail::send(new \App\Mail\MatchNotification($match));
+                $match->update(['notified_at' => now()]);
+            } catch (\Exception $e) {
+                \Log::error('Failed to send match notification directly', [
+                    'match_id' => $match->id,
+                    'error' => $e->getMessage(),
+                ]);
+            }
 
             $matchesCreated++;
         }

@@ -21,7 +21,7 @@ class SendDonorVerificationMail extends Command
      *
      * @var string
      */
-    protected $description = 'Queue a donor verification email to a specified address for testing';
+    protected $description = 'Send a donor verification email to a specified address for testing';
 
     /**
      * Execute the console command.
@@ -38,9 +38,9 @@ class SendDonorVerificationMail extends Command
             return 1;
         }
 
-        Mail::to($email)->queue(new DonorVerificationStatus($donor, $approved));
+        Mail::to($email)->send(new DonorVerificationStatus($donor, $approved));
 
-        $this->info("Donor verification email queued to {$email} (approved={$approved}).");
+        $this->info("Donor verification email sent to {$email} (approved={$approved}).");
 
         return 0;
     }
