@@ -54,23 +54,28 @@ class AdminController extends Controller
             $currentDate->addMonth();
         }
 
+        // Determine date format based on database driver
+        $dateFormat = config('database.default') === 'sqlite' 
+            ? "strftime('%Y-%m', created_at)" 
+            : "DATE_FORMAT(created_at, '%Y-%m')";
+
         // Get donors data grouped by month
         $donorsData = Donor::whereBetween('created_at', [$sixMonthsAgo, $now])
-            ->selectRaw("strftime('%Y-%m', created_at) as month, COUNT(*) as count")
+            ->selectRaw("$dateFormat as month, COUNT(*) as count")
             ->groupBy('month')
             ->pluck('count', 'month')
             ->toArray();
 
         // Get requests data grouped by month
         $requestsData = BloodRequest::whereBetween('created_at', [$sixMonthsAgo, $now])
-            ->selectRaw("strftime('%Y-%m', created_at) as month, COUNT(*) as count")
+            ->selectRaw("$dateFormat as month, COUNT(*) as count")
             ->groupBy('month')
             ->pluck('count', 'month')
             ->toArray();
 
         // Get matches data grouped by month
         $matchesData = Matching::whereBetween('created_at', [$sixMonthsAgo, $now])
-            ->selectRaw("strftime('%Y-%m', created_at) as month, COUNT(*) as count")
+            ->selectRaw("$dateFormat as month, COUNT(*) as count")
             ->groupBy('month')
             ->pluck('count', 'month')
             ->toArray();
