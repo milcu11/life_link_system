@@ -67,7 +67,7 @@ class MatchingController extends Controller
             ]);
 
             try {
-                Mail::send(new \App\Mail\MatchNotification($match));
+                Mail::queue(new \App\Mail\MatchNotification($match));
                 $match->update(['notified_at' => now()]);
             } catch (\Exception $e) {
                 \Log::error('Failed to send match notification directly', [

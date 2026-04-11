@@ -56,21 +56,21 @@ class AdminController extends Controller
 
         // Get donors data grouped by month
         $donorsData = Donor::whereBetween('created_at', [$sixMonthsAgo, $now])
-            ->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as month, COUNT(*) as count")
+            ->selectRaw("strftime('%Y-%m', created_at) as month, COUNT(*) as count")
             ->groupBy('month')
             ->pluck('count', 'month')
             ->toArray();
 
         // Get requests data grouped by month
         $requestsData = BloodRequest::whereBetween('created_at', [$sixMonthsAgo, $now])
-            ->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as month, COUNT(*) as count")
+            ->selectRaw("strftime('%Y-%m', created_at) as month, COUNT(*) as count")
             ->groupBy('month')
             ->pluck('count', 'month')
             ->toArray();
 
         // Get matches data grouped by month
         $matchesData = Matching::whereBetween('created_at', [$sixMonthsAgo, $now])
-            ->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as month, COUNT(*) as count")
+            ->selectRaw("strftime('%Y-%m', created_at) as month, COUNT(*) as count")
             ->groupBy('month')
             ->pluck('count', 'month')
             ->toArray();
@@ -188,7 +188,7 @@ class AdminController extends Controller
             if ($appeal->donor) {
                 $appeal->donor->update(['is_verified' => true, 'verified_at' => now()]);
                 try {
-                    \Illuminate\Support\Facades\Mail::send(new \App\Mail\DonorVerificationStatus($appeal->donor, true));
+                    \Illuminate\Support\Facades\Mail::queue(new \App\Mail\DonorVerificationStatus($appeal->donor, true));
                 } catch (\Exception $e) {
                     Log::error('Appeal approval email failed: ' . $e->getMessage(), ['appeal_id' => $appeal->id]);
                 }
@@ -197,7 +197,7 @@ class AdminController extends Controller
             $appeal->status = 'rejected';
             if ($appeal->donor) {
                 try {
-                    \Illuminate\Support\Facades\Mail::send(new \App\Mail\DonorVerificationStatus($appeal->donor, false));
+                    \Illuminate\Support\Facades\Mail::queue(new \App\Mail\DonorVerificationStatus($appeal->donor, false));
                 } catch (\Exception $e) {
                     Log::error('Appeal rejection email failed: ' . $e->getMessage(), ['appeal_id' => $appeal->id]);
                 }
@@ -227,8 +227,8 @@ class AdminController extends Controller
             if ($donor->user) {
                 try {
                     Log::info('Sending approval email to: ' . $donor->user->email);
-                    Mail::send(new \App\Mail\DonorVerificationStatus($donor, true));
-                    Log::info('Approval email sent successfully for: ' . $donor->user->email);
+                    Mail::queue(new \App\Mail\DonorVerificationStatus($donor, true));
+                    Log::info('Approval email queued successfully for: ' . $donor->user->email);
                 } catch (\Throwable $e) {
                     Log::error('Approval email failed: ' . $e->getMessage(), ['donor_id' => $donor->id, 'email' => $donor->user->email]);
                     return redirect()->back()->with('error', 'Donor approved, but email could not be sent.');
@@ -255,8 +255,8 @@ class AdminController extends Controller
             if ($donor->user) {
                 try {
                     Log::info('Sending rejection email to: ' . $donor->user->email);
-                    Mail::send(new \App\Mail\DonorVerificationStatus($donor, false));
-                    Log::info('Rejection email sent successfully for: ' . $donor->user->email);
+                    Mail::queue(new \App\Mail\DonorVerificationStatus($donor, false));
+                    Log::info('Rejection email queued successfully for: ' . $donor->user->email);
                 } catch (\Throwable $e) {
                     Log::error('Rejection email failed: ' . $e->getMessage(), ['donor_id' => $donor->id, 'email' => $donor->user->email]);
                     return redirect()->back()->with('error', 'Donor rejected, but email could not be sent.');
