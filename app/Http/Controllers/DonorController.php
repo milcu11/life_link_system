@@ -30,8 +30,8 @@ class DonorController extends Controller
             'address' => 'required|string',
             'date_of_birth' => 'required|date',
             'gender' => 'required|in:male,female,other',
-            'latitude' => 'nullable|numeric',
-            'longitude' => 'nullable|numeric',
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
             'emergency_contact' => 'nullable|string|max:20',
             'medical_conditions' => 'nullable|string',
             'verification_document' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:10240', // 10MB max
